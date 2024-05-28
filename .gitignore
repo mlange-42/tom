@@ -1,0 +1,4 @@
+*.out
+*.pprof
+*.exe
+/tom
