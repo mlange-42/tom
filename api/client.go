@@ -21,7 +21,7 @@ type openMeteoClient struct {
 
 func NewClient() Client {
 	return &openMeteoClient{
-		URL:       "https://api.open-meteo.com/v1/forecast",
+		URL:       "https://api.open-meteo.com/v1",
 		UserAgent: DefaultUserAgent,
 		Client:    http.DefaultClient,
 	}
