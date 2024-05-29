@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"net/url"
 	"strings"
 
 	"github.com/mlange-42/tom/util/agg"
@@ -150,7 +151,7 @@ type GeoOptions struct {
 }
 
 func (o *GeoOptions) ToURL(baseURL string) string {
-	url := fmt.Sprintf("%s/search?name=%s", baseURL, o.Name)
+	url := fmt.Sprintf("%s/search?name=%s", baseURL, url.QueryEscape(o.Name))
 
 	if o.Count != 0 {
 		url = fmt.Sprintf("%s&count=%d", url, o.Count)
