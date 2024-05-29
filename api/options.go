@@ -7,36 +7,77 @@ import (
 
 type Forecaster string
 
-var (
+const (
 	Forecast    Forecaster = "forecast"
-	DWD                    = "dwd-icon"
-	NOAA_US                = "gfs"
-	MeteoFrance            = "meteofrance"
-	ESMWF                  = "esmwf"
+	DWD         Forecaster = "dwd-icon"
+	NOAA_US     Forecaster = "gfs"
+	MeteoFrance Forecaster = "meteofrance"
+	ESMWF       Forecaster = "esmwf"
 	// TODO: add the other forecasters
 )
 
-type Options struct {
-	Forecaster        Forecaster // Default "forecast"
-	TemperatureUnit   string     // Default "celsius"
-	WindSpeedUnit     string     // Default "kmh",
-	PrecipitationUnit string     // Default "mm"
-	Timezone          string     // Default "UTC"
-	Days              int        // Default 7
-	PastDays          int        // Default 0
-	HourlyMetrics     []string   // Lists required hourly metrics, see https://open-meteo.com/en/docs for valid metrics
-	DailyMetrics      []string   // Lists required daily metrics, see https://open-meteo.com/en/docs for valid metrics
+type CurrentMetric string
+
+const (
+	CurrentTemp       CurrentMetric = "temperature_2m"
+	CurrentRH         CurrentMetric = "relative_humidity_2m"
+	CurrentPrecip     CurrentMetric = "precipitation"
+	CurrentCloudCover CurrentMetric = "cloud_cover"
+	CurrentWindSpeed  CurrentMetric = "wind_speed_10m"
+	CurrentWindDir    CurrentMetric = "wind_direction_10m"
+)
+
+type HourlyMetric string
+
+const (
+	HourlyTemp       HourlyMetric = "temperature_2m"
+	HourlyRH         HourlyMetric = "relative_humidity_2m"
+	HourlyPrecipProb HourlyMetric = "precipitation_probability"
+	HourlyPrecip     HourlyMetric = "precipitation"
+	HourlyCloudCover HourlyMetric = "cloud_cover"
+	HourlyWindSpeed  HourlyMetric = "wind_speed_10m"
+	HourlyWindDir    HourlyMetric = "wind_direction_10m"
+	HourlyWindGusts  HourlyMetric = "wind_gusts_10m"
+)
+
+type DailyMetric string
+
+const (
+	DailyMinTemp     DailyMetric = "temperature_2m_max"
+	DailyMaxTemp     DailyMetric = "temperature_2m_min"
+	DailySunshine    DailyMetric = "sunshine_duration"
+	DailyPrecip      DailyMetric = "precipitation_sum"
+	DailyPrecipHours DailyMetric = "precipitation_hours"
+	DailyPrecipProb  DailyMetric = "precipitation_probability_max"
+	DailyWindSpeed   DailyMetric = "wind_speed_10m_max"
+	DailyWindGusts   DailyMetric = "wind_gusts_10m_max"
+	DailWindDir      DailyMetric = "wind_direction_10m_dominant"
+)
+
+type Options interface {
+	ToURL(baseURL string) string
 }
 
-func (o *Options) ToURL(baseURL string, loc Location) string {
+type ForecastOptions struct {
+	Location          Location
+	Forecaster        Forecaster      // Default "forecast"
+	TemperatureUnit   string          // Default "celsius"
+	WindSpeedUnit     string          // Default "kmh",
+	PrecipitationUnit string          // Default "mm"
+	Timezone          string          // Default "UTC"
+	Days              int             // Default 7
+	PastDays          int             // Default 0
+	CurrentMetrics    []CurrentMetric // List of required current metrics
+	HourlyMetrics     []HourlyMetric  // List of required hourly metrics
+	DailyMetrics      []DailyMetric   // List of required daily metrics
+}
+
+func (o *ForecastOptions) ToURL(baseURL string) string {
 	forecaster := "forecast"
-	if o != nil && o.Forecaster != "" {
+	if o.Forecaster != "" {
 		forecaster = string(o.Forecaster)
 	}
-	url := fmt.Sprintf(`%s/%s?latitude=%f&longitude=%f&current_weather=true`, baseURL, forecaster, loc.Lat, loc.Lon)
-	if o == nil {
-		return url
-	}
+	url := fmt.Sprintf(`%s/%s?latitude=%f&longitude=%f`, baseURL, forecaster, o.Location.Lat, o.Location.Lon)
 
 	if o.TemperatureUnit != "" {
 		url = fmt.Sprintf(`%s&temperature_unit=%s`, url, o.TemperatureUnit)
@@ -57,14 +98,46 @@ func (o *Options) ToURL(baseURL string, loc Location) string {
 		url = fmt.Sprintf(`%s&past_days=%d`, url, o.PastDays)
 	}
 
-	if o.HourlyMetrics != nil && len(o.HourlyMetrics) > 0 {
-		metrics := strings.Join(o.HourlyMetrics, ",")
+	if len(o.CurrentMetrics) > 0 {
+		met := make([]string, len(o.CurrentMetrics))
+		for i, m := range o.CurrentMetrics {
+			met[i] = string(m)
+		}
+		metrics := strings.Join(met, ",")
+		url = fmt.Sprintf(`%s&current=%s`, url, metrics)
+	}
+
+	if len(o.HourlyMetrics) > 0 {
+		met := make([]string, len(o.HourlyMetrics))
+		for i, m := range o.HourlyMetrics {
+			met[i] = string(m)
+		}
+		metrics := strings.Join(met, ",")
 		url = fmt.Sprintf(`%s&hourly=%s`, url, metrics)
 	}
 
-	if o.DailyMetrics != nil && len(o.DailyMetrics) > 0 {
-		metrics := strings.Join(o.DailyMetrics, ",")
+	if len(o.DailyMetrics) > 0 {
+		met := make([]string, len(o.DailyMetrics))
+		for i, m := range o.DailyMetrics {
+			met[i] = string(m)
+		}
+		metrics := strings.Join(met, ",")
 		url = fmt.Sprintf(`%s&daily=%s`, url, metrics)
+	}
+
+	return url
+}
+
+type GeoOptions struct {
+	Name  string
+	Count int
+}
+
+func (o *GeoOptions) ToURL(baseURL string) string {
+	url := fmt.Sprintf("%s/search?name=%s", baseURL, o.Name)
+
+	if o.Count != 0 {
+		url = fmt.Sprintf("%s&count=%d", url, o.Count)
 	}
 
 	return url

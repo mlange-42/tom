@@ -9,8 +9,15 @@ import (
 
 const DefaultUserAgent = "TOM-terminal-open-meteo"
 
+type API string
+
+const (
+	OpenMeteo API = "https://api.open-meteo.com/v1"
+	Geocoding API = "https://geocoding-api.open-meteo.com/v1"
+)
+
 type Client interface {
-	Get(ctx context.Context, loc Location, req Options) ([]byte, error)
+	Get(ctx context.Context, req Options) ([]byte, error)
 }
 
 type openMeteoClient struct {
@@ -19,16 +26,16 @@ type openMeteoClient struct {
 	Client    *http.Client
 }
 
-func NewClient() Client {
+func NewClient(api API) Client {
 	return &openMeteoClient{
-		URL:       "https://api.open-meteo.com/v1",
+		URL:       string(api),
 		UserAgent: DefaultUserAgent,
 		Client:    http.DefaultClient,
 	}
 }
 
-func (c *openMeteoClient) Get(ctx context.Context, loc Location, opt Options) ([]byte, error) {
-	url := opt.ToURL(c.URL, loc)
+func (c *openMeteoClient) Get(ctx context.Context, opt Options) ([]byte, error) {
+	url := opt.ToURL(c.URL)
 
 	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
