@@ -31,3 +31,8 @@ var codeText = map[int]string{
 	97: "heavy thunderstorm",
 	99: "heavy thunderstorm w/ hail",
 }
+
+func WeatherCodeText(code int) (string, bool) {
+	s, ok := codeText[code]
+	return s, ok
+}

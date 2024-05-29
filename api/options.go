@@ -47,27 +47,28 @@ const (
 type DailyMetric string
 
 const (
-	DailyWeatherCode HourlyMetric = "weather_code"
-	DailyMinTemp     DailyMetric  = "temperature_2m_min"
-	DailyMaxTemp     DailyMetric  = "temperature_2m_max"
-	DailySunshine    DailyMetric  = "sunshine_duration"
-	DailyPrecip      DailyMetric  = "precipitation_sum"
-	DailyPrecipHours DailyMetric  = "precipitation_hours"
-	DailyPrecipProb  DailyMetric  = "precipitation_probability_max"
-	DailyWindSpeed   DailyMetric  = "wind_speed_10m_max"
-	DailyWindGusts   DailyMetric  = "wind_gusts_10m_max"
-	DailyWindDir     DailyMetric  = "wind_direction_10m_dominant"
+	DailyWeatherCode DailyMetric = "weather_code"
+	DailyMinTemp     DailyMetric = "temperature_2m_min"
+	DailyMaxTemp     DailyMetric = "temperature_2m_max"
+	DailySunshine    DailyMetric = "sunshine_duration"
+	DailyPrecip      DailyMetric = "precipitation_sum"
+	DailyPrecipHours DailyMetric = "precipitation_hours"
+	DailyPrecipProb  DailyMetric = "precipitation_probability_max"
+	DailyWindSpeed   DailyMetric = "wind_speed_10m_max"
+	DailyWindGusts   DailyMetric = "wind_gusts_10m_max"
+	DailyWindDir     DailyMetric = "wind_direction_10m_dominant"
 )
 
 var aggregators = map[HourlyMetric]agg.Aggregator{
-	HourlyTemp:       &agg.Point{},
-	HourlyRH:         &agg.Point{},
-	HourlyPrecipProb: &agg.Max{},
-	HourlyPrecip:     &agg.Sum{},
-	HourlyCloudCover: &agg.Max{},
-	HourlyWindSpeed:  &agg.Max{},
-	HourlyWindGusts:  &agg.Max{},
-	HourlyWindDir:    &agg.Point{},
+	HourlyWeatherCode: &agg.Point{},
+	HourlyTemp:        &agg.Point{},
+	HourlyRH:          &agg.Point{},
+	HourlyPrecipProb:  &agg.Max{},
+	HourlyPrecip:      &agg.Sum{},
+	HourlyCloudCover:  &agg.Max{},
+	HourlyWindSpeed:   &agg.Max{},
+	HourlyWindGusts:   &agg.Max{},
+	HourlyWindDir:     &agg.Point{},
 }
 
 type Options interface {

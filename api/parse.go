@@ -42,6 +42,26 @@ type MeteoResult struct {
 	SixHourlyTime []time.Time
 }
 
+func (r *MeteoResult) GetCurrent(key CurrentMetric) float64 {
+	return r.Current.Values[string(key)]
+}
+
+func (r *MeteoResult) GetDaily(key CurrentMetric) []float64 {
+	return r.Daily[string(key)]
+}
+
+func (r *MeteoResult) GetHourly(key HourlyMetric) []float64 {
+	return r.Hourly[string(key)]
+}
+
+func (r *MeteoResult) GetThreeHourly(key HourlyMetric) []float64 {
+	return r.ThreeHourly[string(key)]
+}
+
+func (r *MeteoResult) GetSixHourly(key HourlyMetric) []float64 {
+	return r.SixHourly[string(key)]
+}
+
 type meteoResultJs struct {
 	Latitude          float64
 	Longitude         float64
@@ -113,7 +133,7 @@ func ParseMeteo(data []byte, opt *ForecastOptions) (*MeteoResult, error) {
 	sixHourlyTime := agg.AggregateTime(hourlyTime, 6)
 	sixHourly := map[string][]float64{}
 	for _, key := range opt.HourlyMetrics {
-		sixHourly[string(key)] = aggregators[key].Aggregate(hourly[string(key)], 6, 2, 3)
+		sixHourly[string(key)] = aggregators[key].Aggregate(hourly[string(key)], 6, 1, 4)
 	}
 
 	return &MeteoResult{
