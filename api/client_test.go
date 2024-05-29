@@ -72,4 +72,10 @@ func TestMeteoClient(t *testing.T) {
 	assert.Greater(t, parsed.Location.Lat, 0.0)
 	assert.Greater(t, parsed.Location.Lon, 0.0)
 	assert.Equal(t, "Europe/Berlin", parsed.Location.TimeZone)
+
+	assert.Equal(t, len(parsed.HourlyTime)/3, len(parsed.ThreeHourlyTime))
+	assert.Equal(t, len(parsed.HourlyTime)/6, len(parsed.SixHourlyTime))
+
+	assert.Equal(t, len(parsed.Hourly[string(api.HourlyTemp)])/3, len(parsed.ThreeHourly[string(api.HourlyTemp)]))
+	assert.Equal(t, len(parsed.Hourly[string(api.HourlyTemp)])/6, len(parsed.SixHourly[string(api.HourlyTemp)]))
 }

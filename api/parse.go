@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
+
+	"github.com/mlange-42/tom/util/agg"
 )
 
 type GeoResult struct {
@@ -32,6 +34,12 @@ type MeteoResult struct {
 
 	Daily     map[string][]float64
 	DailyTime []time.Time
+
+	ThreeHourly     map[string][]float64
+	ThreeHourlyTime []time.Time
+
+	SixHourly     map[string][]float64
+	SixHourlyTime []time.Time
 }
 
 type meteoResultJs struct {
@@ -96,6 +104,18 @@ func ParseMeteo(data []byte, opt *ForecastOptions) (*MeteoResult, error) {
 		return nil, err
 	}
 
+	threeHourlyTime := agg.AggregateTime(hourlyTime, 3)
+	threeHourly := map[string][]float64{}
+	for _, key := range opt.HourlyMetrics {
+		threeHourly[string(key)] = aggregators[key].Aggregate(hourly[string(key)], 3, 1, 1)
+	}
+
+	sixHourlyTime := agg.AggregateTime(hourlyTime, 6)
+	sixHourly := map[string][]float64{}
+	for _, key := range opt.HourlyMetrics {
+		sixHourly[string(key)] = aggregators[key].Aggregate(hourly[string(key)], 6, 2, 3)
+	}
+
 	return &MeteoResult{
 		Location: Location{
 			Lat:      m.Latitude,
@@ -108,6 +128,10 @@ func ParseMeteo(data []byte, opt *ForecastOptions) (*MeteoResult, error) {
 		HourlyTime:        hourlyTime,
 		Daily:             daily,
 		DailyTime:         dailyTime,
+		ThreeHourly:       threeHourly,
+		ThreeHourlyTime:   threeHourlyTime,
+		SixHourly:         sixHourly,
+		SixHourlyTime:     sixHourlyTime,
 	}, nil
 }
 

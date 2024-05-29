@@ -5,33 +5,43 @@ import (
 	"time"
 )
 
-type Aggregator interface {
-	Aggregate(data []float64, step int, past int, future int) ([]time.Time, []float64)
-}
-
-type Point struct{}
-
-func (a *Point) Aggregate(t []time.Time, data []float64, step int, past int, future int) ([]time.Time, []float64) {
-	ln := len(data) / step
+func AggregateTime(t []time.Time, step int) []time.Time {
+	ln := len(t) / step
 
 	times := make([]time.Time, ln)
-	values := make([]float64, ln)
 
 	for i := 0; i < ln; i++ {
 		idx := i * step
 		times[i] = t[idx]
+	}
+
+	return times
+}
+
+type Aggregator interface {
+	Aggregate(data []float64, step int, past int, future int) []float64
+}
+
+type Point struct{}
+
+func (a *Point) Aggregate(data []float64, step int, past int, future int) []float64 {
+	ln := len(data) / step
+
+	values := make([]float64, ln)
+
+	for i := 0; i < ln; i++ {
+		idx := i * step
 		values[i] = data[idx]
 	}
 
-	return times, values
+	return values
 }
 
 type Max struct{}
 
-func (a *Max) Aggregate(t []time.Time, data []float64, step int, past int, future int) ([]time.Time, []float64) {
+func (a *Max) Aggregate(data []float64, step int, past int, future int) []float64 {
 	ln := len(data) / step
 
-	times := make([]time.Time, ln)
 	values := make([]float64, ln)
 
 	for i := 0; i < ln; i++ {
@@ -52,19 +62,17 @@ func (a *Max) Aggregate(t []time.Time, data []float64, step int, past int, futur
 			}
 		}
 
-		times[i] = t[idx]
 		values[i] = mx
 	}
 
-	return times, values
+	return values
 }
 
 type Sum struct{}
 
-func (a *Sum) Aggregate(t []time.Time, data []float64, step int, past int, future int) ([]time.Time, []float64) {
+func (a *Sum) Aggregate(data []float64, step int, past int, future int) []float64 {
 	ln := len(data) / step
 
-	times := make([]time.Time, ln)
 	values := make([]float64, ln)
 
 	for i := 0; i < ln; i++ {
@@ -83,19 +91,17 @@ func (a *Sum) Aggregate(t []time.Time, data []float64, step int, past int, futur
 			sum += data[j]
 		}
 
-		times[i] = t[idx]
 		values[i] = sum
 	}
 
-	return times, values
+	return values
 }
 
 type Avg struct{}
 
-func (a *Avg) Aggregate(t []time.Time, data []float64, step int, past int, future int) ([]time.Time, []float64) {
+func (a *Avg) Aggregate(data []float64, step int, past int, future int) []float64 {
 	ln := len(data) / step
 
-	times := make([]time.Time, ln)
 	values := make([]float64, ln)
 
 	for i := 0; i < ln; i++ {
@@ -116,9 +122,8 @@ func (a *Avg) Aggregate(t []time.Time, data []float64, step int, past int, futur
 			cnt++
 		}
 
-		times[i] = t[idx]
 		values[i] = sum / float64(cnt)
 	}
 
-	return times, values
+	return values
 }

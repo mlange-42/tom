@@ -3,6 +3,8 @@ package api
 import (
 	"fmt"
 	"strings"
+
+	"github.com/mlange-42/tom/util/agg"
 )
 
 type Forecaster string
@@ -53,6 +55,17 @@ const (
 	DailyWindGusts   DailyMetric = "wind_gusts_10m_max"
 	DailyWindDir     DailyMetric = "wind_direction_10m_dominant"
 )
+
+var aggregators = map[HourlyMetric]agg.Aggregator{
+	HourlyTemp:       &agg.Point{},
+	HourlyRH:         &agg.Point{},
+	HourlyPrecipProb: &agg.Max{},
+	HourlyPrecip:     &agg.Sum{},
+	HourlyCloudCover: &agg.Max{},
+	HourlyWindSpeed:  &agg.Max{},
+	HourlyWindGusts:  &agg.Max{},
+	HourlyWindDir:    &agg.Point{},
+}
 
 type Options interface {
 	ToURL(baseURL string) string
