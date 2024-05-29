@@ -2,12 +2,12 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 	"strings"
 
 	"github.com/mlange-42/tom/api"
+	"github.com/mlange-42/tom/app"
 	"github.com/mlange-42/tom/config"
 )
 
@@ -27,7 +27,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Println(meteo)
+	a := app.New(strings.ToTitle(loc), meteo)
+	a.Run(app.TCellTerminal)
 }
 
 func GetLocation(location string) (api.Location, error) {
@@ -52,7 +53,7 @@ func GetMeteo(loc api.Location) (*api.MeteoResult, error) {
 
 	opt := api.ForecastOptions{
 		Location: loc,
-		Days:     3,
+		Days:     7,
 		CurrentMetrics: []api.CurrentMetric{
 			api.CurrentTemp,
 			api.CurrentPrecip,
