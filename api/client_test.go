@@ -37,10 +37,10 @@ func TestMeteoClient(t *testing.T) {
 
 	opt := api.ForecastOptions{
 		Location: api.Location{
-			Lat: 52.5,
-			Lon: 13.4,
+			Lat:      52.5,
+			Lon:      13.4,
+			TimeZone: "Europe/Berlin",
 		},
-		Timezone:       "Europe/Berlin",
 		Days:           3,
 		CurrentMetrics: []api.CurrentMetric{api.CurrentWindSpeed, api.CurrentRH},
 		HourlyMetrics:  []api.HourlyMetric{api.HourlyTemp},

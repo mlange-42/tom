@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -21,7 +22,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Println(strings.ToTitle(loc), coords)
+	meteo, err := GetMeteo(coords)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(meteo)
 }
 
 func GetLocation(location string) (api.Location, error) {
@@ -39,4 +45,44 @@ func GetLocation(location string) (api.Location, error) {
 		return api.Location{}, err
 	}
 	return coords, nil
+}
+
+func GetMeteo(loc api.Location) (*api.MeteoResult, error) {
+	client := api.NewClient(api.OpenMeteo)
+
+	opt := api.ForecastOptions{
+		Location: loc,
+		Days:     3,
+		CurrentMetrics: []api.CurrentMetric{
+			api.CurrentTemp,
+			api.CurrentPrecip,
+			api.CurrentCloudCover,
+			api.CurrentWindSpeed,
+			api.CurrentRH,
+		},
+		HourlyMetrics: []api.HourlyMetric{
+			api.HourlyTemp,
+			api.HourlyPrecip,
+			api.HourlyPrecipProb,
+			api.HourlyCloudCover,
+			api.HourlyWindSpeed,
+			api.HourlyWindDir,
+		},
+		DailyMetrics: []api.DailyMetric{
+			api.DailyMinTemp,
+			api.DailyMaxTemp,
+			api.DailyPrecip,
+			api.DailyPrecipProb,
+			api.DailySunshine,
+			api.DailyWindSpeed,
+			api.DailyWindDir,
+		},
+	}
+
+	result, err := client.Get(context.Background(), &opt)
+	if err != nil {
+		return nil, err
+	}
+
+	return api.ParseMeteo(result, &opt)
 }

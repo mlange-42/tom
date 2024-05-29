@@ -51,7 +51,7 @@ const (
 	DailyPrecipProb  DailyMetric = "precipitation_probability_max"
 	DailyWindSpeed   DailyMetric = "wind_speed_10m_max"
 	DailyWindGusts   DailyMetric = "wind_gusts_10m_max"
-	DailWindDir      DailyMetric = "wind_direction_10m_dominant"
+	DailyWindDir     DailyMetric = "wind_direction_10m_dominant"
 )
 
 type Options interface {
@@ -64,7 +64,6 @@ type ForecastOptions struct {
 	TemperatureUnit   string          // Default "celsius"
 	WindSpeedUnit     string          // Default "kmh",
 	PrecipitationUnit string          // Default "mm"
-	Timezone          string          // Default "UTC"
 	Days              int             // Default 7
 	PastDays          int             // Default 0
 	CurrentMetrics    []CurrentMetric // List of required current metrics
@@ -88,8 +87,8 @@ func (o *ForecastOptions) ToURL(baseURL string) string {
 	if o.PrecipitationUnit != "" {
 		url = fmt.Sprintf(`%s&precipitation_unit=%s`, url, o.PrecipitationUnit)
 	}
-	if o.Timezone != "" {
-		url = fmt.Sprintf(`%s&timezone=%s`, url, o.Timezone)
+	if o.Location.TimeZone != "" {
+		url = fmt.Sprintf(`%s&timezone=%s`, url, o.Location.TimeZone)
 	}
 	if o.Days != 0 {
 		url = fmt.Sprintf(`%s&forecast_days=%d`, url, o.Days)

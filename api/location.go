@@ -6,8 +6,9 @@ import (
 )
 
 type Location struct {
-	Lat float64
-	Lon float64
+	Lat      float64
+	Lon      float64
+	TimeZone string
 }
 
 func GetLocation(loc string, locations map[string]Location) (Location, error) {
@@ -29,8 +30,9 @@ func GetLocation(loc string, locations map[string]Location) (Location, error) {
 			return Location{}, fmt.Errorf("location not found: '%s'", loc)
 		}
 		coords = Location{
-			Lat: parsed.Results[0].Latitude,
-			Lon: parsed.Results[0].Longitude,
+			Lat:      parsed.Results[0].Latitude,
+			Lon:      parsed.Results[0].Longitude,
+			TimeZone: parsed.Results[0].TimeZone,
 		}
 	}
 	return coords, nil
