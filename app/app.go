@@ -88,11 +88,27 @@ func (a *App) Run(term string) error {
 }
 
 func gridLayout(a *App) ([]container.Option, error) {
-	t, err := text.New()
+	currentLabel, err := text.New()
 	if err != nil {
 		return nil, err
 	}
-	t.Write(fmt.Sprintf("%s  %0.2f°N, %0.2f°E", a.location, a.data.Location.Lat, a.data.Location.Lon))
+
+	currentLabel.Write(
+		fmt.Sprintf("%s (%0.2f°N, %0.2f°E) | %s",
+			a.location, a.data.Location.Lat, a.data.Location.Lon,
+			formatCurrent(a.data),
+		))
+
+	forecastLabel, err := text.New()
+	if err != nil {
+		return nil, err
+	}
+	for i, t := range a.data.SixHourlyTime {
+		if t.Hour() == 0 {
+			forecastLabel.Write(fmt.Sprintf("%s\n", t.Format(api.DateLayoutShort)))
+		}
+		forecastLabel.Write(fmt.Sprintf("  %2d:00  %s\n", t.Hour(), formatSixHourly(a.data, i)))
+	}
 
 	xLabels := map[int]string{}
 	/*for i := 12; i < len(a.data.HourlyTime); i += 24 {
@@ -101,7 +117,7 @@ func gridLayout(a *App) ([]container.Option, error) {
 	}*/
 	for i := 0; i < len(a.data.HourlyTime); i++ {
 		t := a.data.HourlyTime[i]
-		xLabels[i] = t.Format(api.DateLayoutShort)
+		xLabels[i] = t.Format(api.TimeLayoutShort)
 	}
 
 	linesTemp, err := linechart.New()
@@ -122,21 +138,30 @@ func gridLayout(a *App) ([]container.Option, error) {
 
 	rows := []grid.Element{
 		grid.RowHeightFixed(3,
-			grid.Widget(t,
+			grid.Widget(currentLabel,
 				container.Border(linestyle.Light),
 				container.BorderTitle("Press Esc to quit"),
 			),
 		),
-		grid.RowHeightPerc(50,
-			grid.Widget(linesTemp,
-				container.Border(linestyle.Light),
-				container.BorderTitle("Temperature"),
+		grid.RowHeightPerc(1,
+			grid.ColWidthPerc(66,
+				grid.Widget(forecastLabel,
+					container.Border(linestyle.Light),
+				),
 			),
-		),
-		grid.RowHeightPerc(50,
-			grid.Widget(linesPrecip,
-				container.Border(linestyle.Light),
-				container.BorderTitle("Precipitation"),
+			grid.ColWidthPerc(1,
+				grid.RowHeightPerc(50,
+					grid.Widget(linesTemp,
+						container.Border(linestyle.Light),
+						container.BorderTitle("Temperature"),
+					),
+				),
+				grid.RowHeightPerc(50,
+					grid.Widget(linesPrecip,
+						container.Border(linestyle.Light),
+						container.BorderTitle("Precipitation"),
+					),
+				),
 			),
 		),
 	}
