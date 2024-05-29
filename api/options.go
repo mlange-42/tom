@@ -21,39 +21,42 @@ const (
 type CurrentMetric string
 
 const (
-	CurrentTemp       CurrentMetric = "temperature_2m"
-	CurrentRH         CurrentMetric = "relative_humidity_2m"
-	CurrentPrecip     CurrentMetric = "precipitation"
-	CurrentCloudCover CurrentMetric = "cloud_cover"
-	CurrentWindSpeed  CurrentMetric = "wind_speed_10m"
-	CurrentWindDir    CurrentMetric = "wind_direction_10m"
+	CurrentWeatherCode CurrentMetric = "weather_code"
+	CurrentTemp        CurrentMetric = "temperature_2m"
+	CurrentRH          CurrentMetric = "relative_humidity_2m"
+	CurrentPrecip      CurrentMetric = "precipitation"
+	CurrentCloudCover  CurrentMetric = "cloud_cover"
+	CurrentWindSpeed   CurrentMetric = "wind_speed_10m"
+	CurrentWindDir     CurrentMetric = "wind_direction_10m"
 )
 
 type HourlyMetric string
 
 const (
-	HourlyTemp       HourlyMetric = "temperature_2m"
-	HourlyRH         HourlyMetric = "relative_humidity_2m"
-	HourlyPrecipProb HourlyMetric = "precipitation_probability"
-	HourlyPrecip     HourlyMetric = "precipitation"
-	HourlyCloudCover HourlyMetric = "cloud_cover"
-	HourlyWindSpeed  HourlyMetric = "wind_speed_10m"
-	HourlyWindDir    HourlyMetric = "wind_direction_10m"
-	HourlyWindGusts  HourlyMetric = "wind_gusts_10m"
+	HourlyWeatherCode HourlyMetric = "weather_code"
+	HourlyTemp        HourlyMetric = "temperature_2m"
+	HourlyRH          HourlyMetric = "relative_humidity_2m"
+	HourlyPrecipProb  HourlyMetric = "precipitation_probability"
+	HourlyPrecip      HourlyMetric = "precipitation"
+	HourlyCloudCover  HourlyMetric = "cloud_cover"
+	HourlyWindSpeed   HourlyMetric = "wind_speed_10m"
+	HourlyWindDir     HourlyMetric = "wind_direction_10m"
+	HourlyWindGusts   HourlyMetric = "wind_gusts_10m"
 )
 
 type DailyMetric string
 
 const (
-	DailyMinTemp     DailyMetric = "temperature_2m_min"
-	DailyMaxTemp     DailyMetric = "temperature_2m_max"
-	DailySunshine    DailyMetric = "sunshine_duration"
-	DailyPrecip      DailyMetric = "precipitation_sum"
-	DailyPrecipHours DailyMetric = "precipitation_hours"
-	DailyPrecipProb  DailyMetric = "precipitation_probability_max"
-	DailyWindSpeed   DailyMetric = "wind_speed_10m_max"
-	DailyWindGusts   DailyMetric = "wind_gusts_10m_max"
-	DailyWindDir     DailyMetric = "wind_direction_10m_dominant"
+	DailyWeatherCode HourlyMetric = "weather_code"
+	DailyMinTemp     DailyMetric  = "temperature_2m_min"
+	DailyMaxTemp     DailyMetric  = "temperature_2m_max"
+	DailySunshine    DailyMetric  = "sunshine_duration"
+	DailyPrecip      DailyMetric  = "precipitation_sum"
+	DailyPrecipHours DailyMetric  = "precipitation_hours"
+	DailyPrecipProb  DailyMetric  = "precipitation_probability_max"
+	DailyWindSpeed   DailyMetric  = "wind_speed_10m_max"
+	DailyWindGusts   DailyMetric  = "wind_gusts_10m_max"
+	DailyWindDir     DailyMetric  = "wind_direction_10m_dominant"
 )
 
 var aggregators = map[HourlyMetric]agg.Aggregator{
