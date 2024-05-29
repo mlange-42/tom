@@ -58,4 +58,9 @@ func TestMeteoClient(t *testing.T) {
 
 	assert.Greater(t, parsed.Current.Values[string(api.CurrentWindSpeed)], 0.0)
 	assert.Greater(t, parsed.Current.Values[string(api.CurrentRH)], 0.0)
+
+	assert.Greater(t, len(parsed.HourlyTime), 0)
+	temp, ok := parsed.Hourly[string(api.HourlyTemp)]
+	assert.True(t, ok)
+	assert.Greater(t, len(temp), 0)
 }

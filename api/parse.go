@@ -81,8 +81,41 @@ func ParseMeteo(data []byte, opt *ForecastOptions) (*MeteoResult, error) {
 		current.Values[string(key)] = f
 	}
 
+	hourly := map[string][]float64{}
+	rawTime, ok := m.Hourly["time"]
+	if !ok {
+		return nil, fmt.Errorf("no time not in results")
+	}
+	timeStr := []string{}
+	err = json.Unmarshal(rawTime, &timeStr)
+	if err != nil {
+		return nil, err
+	}
+	hourlyTime := make([]time.Time, len(timeStr))
+	for i, v := range timeStr {
+		hourlyTime[i], err = time.Parse(timeLayout, v)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	for _, key := range opt.HourlyMetrics {
+		v, ok := m.Hourly[string(key)]
+		if !ok {
+			return nil, fmt.Errorf("metric '%s' not in results", string(key))
+		}
+		data := []float64{}
+		err := json.Unmarshal(v, &data)
+		if err != nil {
+			return nil, err
+		}
+		hourly[string(key)] = data
+	}
+
 	return &MeteoResult{
 		GenerationTime_ms: m.GenerationTime_ms,
 		Current:           current,
+		Hourly:            hourly,
+		HourlyTime:        hourlyTime,
 	}, nil
 }
