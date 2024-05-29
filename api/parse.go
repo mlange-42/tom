@@ -81,35 +81,14 @@ func ParseMeteo(data []byte, opt *ForecastOptions) (*MeteoResult, error) {
 		current.Values[string(key)] = f
 	}
 
-	hourly := map[string][]float64{}
-	rawTime, ok := m.Hourly["time"]
-	if !ok {
-		return nil, fmt.Errorf("no time not in results")
-	}
-	timeStr := []string{}
-	err = json.Unmarshal(rawTime, &timeStr)
+	hourlyTime, hourly, err := parseHourly(&m, opt.HourlyMetrics)
 	if err != nil {
 		return nil, err
 	}
-	hourlyTime := make([]time.Time, len(timeStr))
-	for i, v := range timeStr {
-		hourlyTime[i], err = time.Parse(timeLayout, v)
-		if err != nil {
-			return nil, err
-		}
-	}
 
-	for _, key := range opt.HourlyMetrics {
-		v, ok := m.Hourly[string(key)]
-		if !ok {
-			return nil, fmt.Errorf("metric '%s' not in results", string(key))
-		}
-		data := []float64{}
-		err := json.Unmarshal(v, &data)
-		if err != nil {
-			return nil, err
-		}
-		hourly[string(key)] = data
+	dailyTime, daily, err := parseDaily(&m, opt.DailyMetrics)
+	if err != nil {
+		return nil, err
 	}
 
 	return &MeteoResult{
@@ -117,5 +96,75 @@ func ParseMeteo(data []byte, opt *ForecastOptions) (*MeteoResult, error) {
 		Current:           current,
 		Hourly:            hourly,
 		HourlyTime:        hourlyTime,
+		Daily:             daily,
+		DailyTime:         dailyTime,
 	}, nil
+}
+
+func parseHourly(m *meteoResultJs, metrics []HourlyMetric) ([]time.Time, map[string][]float64, error) {
+	hourly := map[string][]float64{}
+	rawTime, ok := m.Hourly["time"]
+	if !ok {
+		return nil, nil, fmt.Errorf("no time not in results")
+	}
+	timeStr := []string{}
+	err := json.Unmarshal(rawTime, &timeStr)
+	if err != nil {
+		return nil, nil, err
+	}
+	hourlyTime := make([]time.Time, len(timeStr))
+	for i, v := range timeStr {
+		hourlyTime[i], err = time.Parse(timeLayout, v)
+		if err != nil {
+			return nil, nil, err
+		}
+	}
+
+	for _, key := range metrics {
+		v, ok := m.Hourly[string(key)]
+		if !ok {
+			return nil, nil, fmt.Errorf("metric '%s' not in results", string(key))
+		}
+		data := []float64{}
+		err := json.Unmarshal(v, &data)
+		if err != nil {
+			return nil, nil, err
+		}
+		hourly[string(key)] = data
+	}
+	return hourlyTime, hourly, nil
+}
+
+func parseDaily(m *meteoResultJs, metrics []DailyMetric) ([]time.Time, map[string][]float64, error) {
+	daily := map[string][]float64{}
+	rawTime, ok := m.Daily["time"]
+	if !ok {
+		return nil, nil, fmt.Errorf("no time not in results")
+	}
+	timeStr := []string{}
+	err := json.Unmarshal(rawTime, &timeStr)
+	if err != nil {
+		return nil, nil, err
+	}
+	dailyTime := make([]time.Time, len(timeStr))
+	for i, v := range timeStr {
+		dailyTime[i], err = time.Parse(dateLayout, v)
+		if err != nil {
+			return nil, nil, err
+		}
+	}
+
+	for _, key := range metrics {
+		v, ok := m.Daily[string(key)]
+		if !ok {
+			return nil, nil, fmt.Errorf("metric '%s' not in results", string(key))
+		}
+		data := []float64{}
+		err := json.Unmarshal(v, &data)
+		if err != nil {
+			return nil, nil, err
+		}
+		daily[string(key)] = data
+	}
+	return dailyTime, daily, nil
 }

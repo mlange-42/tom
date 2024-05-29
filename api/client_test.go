@@ -37,14 +37,14 @@ func TestMeteoClient(t *testing.T) {
 
 	opt := api.ForecastOptions{
 		Location: api.Location{
-			Lat: 13.4,
-			Lon: 52.5,
+			Lat: 52.5,
+			Lon: 13.4,
 		},
 		Timezone:       "Europe/Berlin",
-		Days:           2,
+		Days:           3,
 		CurrentMetrics: []api.CurrentMetric{api.CurrentWindSpeed, api.CurrentRH},
 		HourlyMetrics:  []api.HourlyMetric{api.HourlyTemp},
-		DailyMetrics:   []api.DailyMetric{api.DailyMaxTemp},
+		DailyMetrics:   []api.DailyMetric{api.DailyMaxTemp, api.DailyMinTemp},
 	}
 
 	result, err := client.Get(context.Background(), &opt)
@@ -63,4 +63,9 @@ func TestMeteoClient(t *testing.T) {
 	temp, ok := parsed.Hourly[string(api.HourlyTemp)]
 	assert.True(t, ok)
 	assert.Greater(t, len(temp), 0)
+
+	assert.Greater(t, len(parsed.DailyTime), 0)
+	maxTemp, ok := parsed.Daily[string(api.DailyMaxTemp)]
+	assert.True(t, ok)
+	assert.Greater(t, len(maxTemp), 0)
 }

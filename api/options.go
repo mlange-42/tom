@@ -43,8 +43,8 @@ const (
 type DailyMetric string
 
 const (
-	DailyMinTemp     DailyMetric = "temperature_2m_max"
-	DailyMaxTemp     DailyMetric = "temperature_2m_min"
+	DailyMinTemp     DailyMetric = "temperature_2m_min"
+	DailyMaxTemp     DailyMetric = "temperature_2m_max"
 	DailySunshine    DailyMetric = "sunshine_duration"
 	DailyPrecip      DailyMetric = "precipitation_sum"
 	DailyPrecipHours DailyMetric = "precipitation_hours"
