@@ -3,6 +3,8 @@ package api
 import (
 	"fmt"
 	"strings"
+
+	"github.com/mlange-42/tom/util/agg"
 )
 
 type Forecaster string
@@ -51,8 +53,19 @@ const (
 	DailyPrecipProb  DailyMetric = "precipitation_probability_max"
 	DailyWindSpeed   DailyMetric = "wind_speed_10m_max"
 	DailyWindGusts   DailyMetric = "wind_gusts_10m_max"
-	DailWindDir      DailyMetric = "wind_direction_10m_dominant"
+	DailyWindDir     DailyMetric = "wind_direction_10m_dominant"
 )
+
+var aggregators = map[HourlyMetric]agg.Aggregator{
+	HourlyTemp:       &agg.Point{},
+	HourlyRH:         &agg.Point{},
+	HourlyPrecipProb: &agg.Max{},
+	HourlyPrecip:     &agg.Sum{},
+	HourlyCloudCover: &agg.Max{},
+	HourlyWindSpeed:  &agg.Max{},
+	HourlyWindGusts:  &agg.Max{},
+	HourlyWindDir:    &agg.Point{},
+}
 
 type Options interface {
 	ToURL(baseURL string) string
@@ -64,7 +77,6 @@ type ForecastOptions struct {
 	TemperatureUnit   string          // Default "celsius"
 	WindSpeedUnit     string          // Default "kmh",
 	PrecipitationUnit string          // Default "mm"
-	Timezone          string          // Default "UTC"
 	Days              int             // Default 7
 	PastDays          int             // Default 0
 	CurrentMetrics    []CurrentMetric // List of required current metrics
@@ -88,8 +100,8 @@ func (o *ForecastOptions) ToURL(baseURL string) string {
 	if o.PrecipitationUnit != "" {
 		url = fmt.Sprintf(`%s&precipitation_unit=%s`, url, o.PrecipitationUnit)
 	}
-	if o.Timezone != "" {
-		url = fmt.Sprintf(`%s&timezone=%s`, url, o.Timezone)
+	if o.Location.TimeZone != "" {
+		url = fmt.Sprintf(`%s&timezone=%s`, url, o.Location.TimeZone)
 	}
 	if o.Days != 0 {
 		url = fmt.Sprintf(`%s&forecast_days=%d`, url, o.Days)

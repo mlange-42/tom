@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
+
+	"github.com/mlange-42/tom/util/agg"
 )
 
 type GeoResult struct {
@@ -22,6 +24,8 @@ type GeoResultEntry struct {
 }
 
 type MeteoResult struct {
+	Location Location
+
 	GenerationTime_ms float64
 	Current           CurrentWeather
 
@@ -30,9 +34,18 @@ type MeteoResult struct {
 
 	Daily     map[string][]float64
 	DailyTime []time.Time
+
+	ThreeHourly     map[string][]float64
+	ThreeHourlyTime []time.Time
+
+	SixHourly     map[string][]float64
+	SixHourlyTime []time.Time
 }
 
 type meteoResultJs struct {
+	Latitude          float64
+	Longitude         float64
+	TimeZone          string
 	GenerationTime_ms float64
 	Current           map[string]any             `json:"current"`
 	Hourly            map[string]json.RawMessage `json:"hourly"`
@@ -65,7 +78,7 @@ func ParseMeteo(data []byte, opt *ForecastOptions) (*MeteoResult, error) {
 
 	var err error
 	current := CurrentWeather{Values: map[string]float64{}}
-	current.Time, err = time.Parse(timeLayout, m.Current["time"].(string))
+	current.Time, err = time.Parse(TimeLayout, m.Current["time"].(string))
 	if err != nil {
 		return nil, err
 	}
@@ -91,13 +104,34 @@ func ParseMeteo(data []byte, opt *ForecastOptions) (*MeteoResult, error) {
 		return nil, err
 	}
 
+	threeHourlyTime := agg.AggregateTime(hourlyTime, 3)
+	threeHourly := map[string][]float64{}
+	for _, key := range opt.HourlyMetrics {
+		threeHourly[string(key)] = aggregators[key].Aggregate(hourly[string(key)], 3, 1, 1)
+	}
+
+	sixHourlyTime := agg.AggregateTime(hourlyTime, 6)
+	sixHourly := map[string][]float64{}
+	for _, key := range opt.HourlyMetrics {
+		sixHourly[string(key)] = aggregators[key].Aggregate(hourly[string(key)], 6, 2, 3)
+	}
+
 	return &MeteoResult{
+		Location: Location{
+			Lat:      m.Latitude,
+			Lon:      m.Longitude,
+			TimeZone: m.TimeZone,
+		},
 		GenerationTime_ms: m.GenerationTime_ms,
 		Current:           current,
 		Hourly:            hourly,
 		HourlyTime:        hourlyTime,
 		Daily:             daily,
 		DailyTime:         dailyTime,
+		ThreeHourly:       threeHourly,
+		ThreeHourlyTime:   threeHourlyTime,
+		SixHourly:         sixHourly,
+		SixHourlyTime:     sixHourlyTime,
 	}, nil
 }
 
@@ -114,7 +148,7 @@ func parseHourly(m *meteoResultJs, metrics []HourlyMetric) ([]time.Time, map[str
 	}
 	hourlyTime := make([]time.Time, len(timeStr))
 	for i, v := range timeStr {
-		hourlyTime[i], err = time.Parse(timeLayout, v)
+		hourlyTime[i], err = time.Parse(TimeLayout, v)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -148,7 +182,7 @@ func parseDaily(m *meteoResultJs, metrics []DailyMetric) ([]time.Time, map[strin
 	}
 	dailyTime := make([]time.Time, len(timeStr))
 	for i, v := range timeStr {
-		dailyTime[i], err = time.Parse(dateLayout, v)
+		dailyTime[i], err = time.Parse(DateLayout, v)
 		if err != nil {
 			return nil, nil, err
 		}
