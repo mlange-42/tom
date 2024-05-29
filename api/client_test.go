@@ -68,4 +68,8 @@ func TestMeteoClient(t *testing.T) {
 	maxTemp, ok := parsed.Daily[string(api.DailyMaxTemp)]
 	assert.True(t, ok)
 	assert.Greater(t, len(maxTemp), 0)
+
+	assert.Greater(t, parsed.Location.Lat, 0.0)
+	assert.Greater(t, parsed.Location.Lon, 0.0)
+	assert.Equal(t, "Europe/Berlin", parsed.Location.TimeZone)
 }
