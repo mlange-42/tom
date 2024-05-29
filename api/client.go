@@ -36,7 +36,6 @@ func NewClient(api API) Client {
 
 func (c *openMeteoClient) Get(ctx context.Context, opt Options) ([]byte, error) {
 	url := opt.ToURL(c.URL)
-	//fmt.Println(url)
 
 	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
