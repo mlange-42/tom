@@ -24,11 +24,19 @@ type GeoResultEntry struct {
 type MeteoResult struct {
 	GenerationTime_ms float64
 	Current           CurrentWeather
+
+	Hourly     map[string][]float64
+	HourlyTime []time.Time
+
+	Daily     map[string][]float64
+	DailyTime []time.Time
 }
 
 type meteoResultJs struct {
 	GenerationTime_ms float64
-	Current           map[string]any `json:"current"`
+	Current           map[string]any             `json:"current"`
+	Hourly            map[string]json.RawMessage `json:"hourly"`
+	Daily             map[string]json.RawMessage `json:"daily"`
 }
 
 type CurrentWeather struct {
