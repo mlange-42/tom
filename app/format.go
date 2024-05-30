@@ -34,7 +34,7 @@ func formatSixHourly(data *api.MeteoResult, idx int) string {
 	}
 
 	return fmt.Sprintf(
-		"%20s  %3d°C  %4.1fmm (%3d%%)  %3dkm/h %-3s  %3d%%CC  %3d%%RH",
+		"%27s  %3d°C  %4.1fmm (%3d%%)  %3dkm/h %-3s  %3d%%CC  %3d%%RH",
 		codeStr, int(math.Round(data.GetSixHourly(api.HourlyTemp)[idx])),
 		data.GetSixHourly(api.HourlyPrecip)[idx],
 		int(data.GetSixHourly(api.HourlyPrecipProb)[idx]),

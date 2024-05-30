@@ -20,7 +20,7 @@ var directions = []string{
 	"W",
 	"WNW",
 	"NW",
-	"WWN",
+	"NNW",
 }
 
 func Direction(degrees float64) string {
