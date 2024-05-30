@@ -1,16 +1,232 @@
 0:
   name: clear sky
   symbol: |-
-    123456789
-    123456789
-    123456789
-    123456789
-    123456789
+    |   \   /   |
+    |    .-.    |
+    | - (   ) - |
+    |    '-'    |
+    |   /   \   |
 1:
   name: mainly clear
   symbol: |-
-    123456789
-    123456789
-    123456789
-    123456789
-    123456789
+    |_`/""\´_   |
+    | ,\__/ .-. |
+    |  /  \(___)|
+    |           |
+    |           |
+2:
+  name: partly cloudy
+  symbol: |-
+    |_`/"".-.   |
+    | ,\_(   ). |
+    |  /(___(__)|
+    |           |
+    |           |
+3:
+  name: overcast
+  symbol: |-
+    |    .--.   |
+    | .-(    ). |
+    |(___.__(__)|
+    |           |
+    |           |
+45:
+  name: fog
+  symbol: |-
+    |           |
+    | _-_-_-_-  |
+    |  _-_-_-_- |
+    | _-_-_-_-  |
+    |           |
+48:
+  name: depositing rime fog
+  symbol: |-
+    |           |
+    | _-_-_-_-  |
+    |  _-_-_-_- |
+    | _-_-_-_-  |
+    | ________! |
+51:
+  name: light drizzle
+  symbol: |-
+    |    .-.    |
+    |   (   ).  |
+    |  (___(__) |
+    |    .  .   |
+    |    .  .   |
+53:
+  name: moderate drizzle
+  symbol: |-
+    |    .-.    |
+    |   (   ).  |
+    |  (___(__) |
+    |  .  .  .  |
+    |  .  .  .  |
+55:
+  name: dense drizzle
+  symbol: |-
+    |    .-.    |
+    |   (   ).  |
+    |  (___(__) |
+    |  . . . .  |
+    |  . . . .  |
+56:
+  name: light freezing drizzle
+  symbol: |-
+    |    .-.    |
+    |   (   ).  |
+    |  (___(__) |
+    |    .  .   |
+    | ___.__._! |
+57:
+  name: dense freezing drizzle
+  symbol: |-
+    |    .-.    |
+    |   (   ).  |
+    |  (___(__) |
+    |  . . . .  |
+    | _._._._.! |
+61:
+  name: light rain
+  symbol: |-
+    |    .--.   |
+    | .-(    ). |
+    |(___.__(__)|
+    |  ,  ,  ,  |
+    | ,  ,  ,   |
+63:
+  name: moderate rain
+  symbol: |-
+    |    .--.   |
+    | .-(    ). |
+    |(___.__(__)|
+    |  , , , ,  |
+    | , , , ,   |
+65:
+  name: heavy rain
+  symbol: |-
+    |    .--.   |
+    | .-(    ). |
+    |(___.__(__)|
+    |  ,, ,, ,, |
+    | ,, ,, ,,  |
+66:
+  name: light freezing rain
+  symbol: |-
+    |    .--.   |
+    | .-(    ). |
+    |(___.__(__)|
+    |  ,  ,  ,  |
+    |_,__,__,__!|
+67:
+  name: heavy freezing rain
+  symbol: |-
+    |    .--.   |
+    | .-(    ). |
+    |(___.__(__)|
+    |  ,, ,, ,, |
+    |_,,_,,_,,_!|
+71:
+  name: light snowfall
+  symbol: |-
+    |    .--.   |
+    | .-(    ). |
+    |(___.__(__)|
+    |  *  *  *  |
+    |  *  *  *  |
+73:
+  name: moderate snowfall
+  symbol: |-
+    |    .--.   |
+    | .-(    ). |
+    |(___.__(__)|
+    | * * * * * |
+    | * * * * * |
+75:
+  name: heavy snowfall
+  symbol: |-
+    |    .--.   |
+    | .-(    ). |
+    |(___.__(__)|
+    | ** *** ** |
+    | ***** *** |
+77:
+  name: snow grains
+  symbol: |-
+    |    .--.   |
+    | .-(    ). |
+    |(___.__(__)|
+    | * ° * ° * |
+    | ° * ° * ° |
+81:
+  name: slight rain showers
+  symbol: |-
+    |_`/"".-.   |
+    | ,\_(   ). |
+    |  /(___(__)|
+    |   ,  ,  , |
+    |  ,  ,  ,  |
+82:
+  name: moderate rain showers
+  symbol: |-
+    |_`/"".-.   |
+    | ,\_(   ). |
+    |  /(___(__)|
+    |   , , , , |
+    |  , , , ,  |
+83:
+  name: violent rain showers
+  symbol: |-
+    |_`/"".-.   |
+    | ,\_(   ). |
+    |  /(___(__)|
+    |  ,, ,, ,, |
+    | ,, ,, ,,  |
+85:
+  name: slight snow showers
+  symbol: |-
+    |_`/"".-.   |
+    | ,\_(   ). |
+    |  /(___(__)|
+    |   *  *  * |
+    |   *  *  * |
+86:
+  name: heavy snow showers
+  symbol: |-
+    |_`/"".-.   |
+    | ,\_(   ). |
+    |  /(___(__)|
+    |   ** **** |
+    |   **** ** |
+95:
+  name: slight thunderstorm
+  symbol: |-
+    |    .--.   |
+    | .-(    ). |
+    |(___.__(__)|
+    |  ,  , /_  |
+    | ,  ,   /  |
+96:
+  name: slight thunderstorm w/ hail
+  symbol: |-
+    |    .--.   |
+    | .-(    ). |
+    |(___.__(__)|
+    |  °  ° /_  |
+    | °  °   /  |
+97:
+  name: heavy thunderstorm
+  symbol: |-
+    |    .--.   |
+    | .-(    ). |
+    |(___.__(__)|
+    | ,, ,, /_  |
+    |,, ,,   /  |
+98:
+  name: heavy thunderstorm w/ hail
+  symbol: |-
+    |    .--.   |
+    | .-(    ). |
+    |(___.__(__)|
+    | °° °° /_  |
+    |°° °°   /  |
