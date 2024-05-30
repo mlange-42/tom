@@ -14,6 +14,6 @@ func TestDirection(t *testing.T) {
 	assert.Equal(t, "W", api.Direction(270))
 	assert.Equal(t, "N", api.Direction(360))
 
-	assert.Equal(t, "N", api.Direction(11))
-	assert.Equal(t, "NNE", api.Direction(12))
+	assert.Equal(t, "N", api.Direction(22))
+	assert.Equal(t, "NE", api.Direction(23))
 }
