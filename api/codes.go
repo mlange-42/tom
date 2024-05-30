@@ -1,24 +1,5 @@
 package api
 
-import (
-	"github.com/mlange-42/tom/data"
-	"gopkg.in/yaml.v3"
-)
-
-var codes map[int]WeatherCode
-
-type WeatherCode struct {
-	Name   string
-	Symbol string
-}
-
-func init() {
-	codes = map[int]WeatherCode{}
-	if err := yaml.Unmarshal(data.WeatherCodes, &codes); err != nil {
-		panic(err)
-	}
-}
-
 /*var codeText = map[int]string{
 	0:  "clear sky",
 	1:  "mainly clear",
@@ -50,13 +31,3 @@ func init() {
 	97: "heavy thunderstorm",
 	99: "heavy thunderstorm w/ hail",
 }*/
-
-func WeatherCodeText(code int) (string, bool) {
-	s, ok := codes[code]
-	return s.Name, ok
-}
-
-func WeatherCodeSymbol(code int) (string, bool) {
-	s, ok := codes[code]
-	return s.Symbol, ok
-}

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/mlange-42/tom/api"
+	"github.com/mlange-42/tom/render"
 	"github.com/mum4k/termdash"
 	"github.com/mum4k/termdash/container"
 	"github.com/mum4k/termdash/container/grid"
@@ -14,7 +15,6 @@ import (
 	"github.com/mum4k/termdash/terminal/tcell"
 	"github.com/mum4k/termdash/terminal/termbox"
 	"github.com/mum4k/termdash/terminal/terminalapi"
-	"github.com/mum4k/termdash/widgets/linechart"
 	"github.com/mum4k/termdash/widgets/text"
 )
 
@@ -110,38 +110,15 @@ func gridLayout(a *App) ([]container.Option, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	renderer := render.NewRenderer(a.data)
 	for i, t := range a.data.SixHourlyTime {
 		if t.Hour() == 0 {
 			forecastLabel.Write(fmt.Sprintf("%s\n", t.Format(api.DateLayoutShort)))
+			forecastLabel.Write(renderer.Day(i) + "\n")
 		}
-		forecastLabel.Write(fmt.Sprintf("  %2d:00  %s\n", t.Hour(), formatSixHourly(a.data, i)))
+		//forecastLabel.Write(fmt.Sprintf("  %2d:00  %s\n", t.Hour(), formatSixHourly(a.data, i)))
 	}
-
-	xLabels := map[int]string{}
-	/*for i := 12; i < len(a.data.HourlyTime); i += 24 {
-		t := a.data.HourlyTime[i]
-		xLabels[i] = t.Format(api.DateLayoutShort)
-	}*/
-	for i := 0; i < len(a.data.HourlyTime); i++ {
-		t := a.data.HourlyTime[i]
-		xLabels[i] = t.Format(api.DateTimeLayoutShort)
-	}
-
-	linesTemp, err := linechart.New()
-	if err != nil {
-		return nil, err
-	}
-	linesTemp.Series("temperature", a.data.Hourly[string(api.HourlyTemp)],
-		linechart.SeriesXLabels(xLabels),
-	)
-
-	linesPrecip, err := linechart.New()
-	if err != nil {
-		return nil, err
-	}
-	linesPrecip.Series("precip", a.data.Hourly[string(api.HourlyPrecip)],
-		linechart.SeriesXLabels(xLabels),
-	)
 
 	rows := []grid.Element{
 		grid.RowHeightFixed(3,
@@ -150,25 +127,10 @@ func gridLayout(a *App) ([]container.Option, error) {
 				container.BorderTitle("Press Esc to quit"),
 			),
 		),
-		grid.RowHeightPerc(1,
-			grid.ColWidthPerc(66,
-				grid.Widget(forecastLabel,
-					container.Border(linestyle.Light),
-				),
-			),
-			grid.ColWidthPerc(1,
-				grid.RowHeightPerc(50,
-					grid.Widget(linesTemp,
-						container.Border(linestyle.Light),
-						container.BorderTitle("Temperature"),
-					),
-				),
-				grid.RowHeightPerc(50,
-					grid.Widget(linesPrecip,
-						container.Border(linestyle.Light),
-						container.BorderTitle("Precipitation"),
-					),
-				),
+		grid.RowHeightFixed(1,
+			grid.Widget(forecastLabel,
+				container.Border(linestyle.Light),
+				container.BorderTitle("Forecast"),
 			),
 		),
 	}
