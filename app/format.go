@@ -16,7 +16,7 @@ func formatCurrent(data *api.MeteoResult) string {
 	}
 
 	return fmt.Sprintf(
-		"%s  %3d°C  %4.1fmm  %3dkm/h %-3s  %3d%%CC  %3d%%RH",
+		"%s %3d°C  %4.1fmm  %3dkm/h %-3s  %3d%%CC  %3d%%RH",
 		codeStr, int(math.Round(data.GetCurrent(api.CurrentTemp))),
 		data.GetCurrent(api.CurrentPrecip),
 		int(data.GetCurrent(api.CurrentWindSpeed)),
