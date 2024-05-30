@@ -26,22 +26,3 @@ func formatCurrent(d *api.MeteoResult) string {
 		int(d.GetCurrent(api.CurrentRH)),
 	)
 }
-
-func formatSixHourly(d *api.MeteoResult, idx int) string {
-	code := int(d.GetSixHourly(api.HourlyWeatherCode)[idx])
-	codeProps, ok := data.WeatherCodes[code]
-	if !ok {
-		log.Fatalf("unknown weather code %d", code)
-	}
-
-	return fmt.Sprintf(
-		"%27s  %3d°C  %4.1fmm (%3d%%)  %3dkm/h %-2s  %3d%%CC  %3d%%RH",
-		codeProps.Name, int(math.Round(d.GetSixHourly(api.HourlyTemp)[idx])),
-		d.GetSixHourly(api.HourlyPrecip)[idx],
-		int(d.GetSixHourly(api.HourlyPrecipProb)[idx]),
-		int(d.GetSixHourly(api.HourlyWindSpeed)[idx]),
-		api.Direction(d.GetSixHourly(api.HourlyWindDir)[idx]),
-		int(d.GetSixHourly(api.HourlyCloudCover)[idx]),
-		int(d.GetSixHourly(api.HourlyRH)[idx]),
-	)
-}
