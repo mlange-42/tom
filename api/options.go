@@ -22,27 +22,29 @@ const (
 type CurrentMetric string
 
 const (
-	CurrentWeatherCode CurrentMetric = "weather_code"
-	CurrentTemp        CurrentMetric = "temperature_2m"
-	CurrentRH          CurrentMetric = "relative_humidity_2m"
-	CurrentPrecip      CurrentMetric = "precipitation"
-	CurrentCloudCover  CurrentMetric = "cloud_cover"
-	CurrentWindSpeed   CurrentMetric = "wind_speed_10m"
-	CurrentWindDir     CurrentMetric = "wind_direction_10m"
+	CurrentWeatherCode  CurrentMetric = "weather_code"
+	CurrentTemp         CurrentMetric = "temperature_2m"
+	CurrentApparentTemp CurrentMetric = "apparent_temperature"
+	CurrentRH           CurrentMetric = "relative_humidity_2m"
+	CurrentPrecip       CurrentMetric = "precipitation"
+	CurrentCloudCover   CurrentMetric = "cloud_cover"
+	CurrentWindSpeed    CurrentMetric = "wind_speed_10m"
+	CurrentWindDir      CurrentMetric = "wind_direction_10m"
 )
 
 type HourlyMetric string
 
 const (
-	HourlyWeatherCode HourlyMetric = "weather_code"
-	HourlyTemp        HourlyMetric = "temperature_2m"
-	HourlyRH          HourlyMetric = "relative_humidity_2m"
-	HourlyPrecipProb  HourlyMetric = "precipitation_probability"
-	HourlyPrecip      HourlyMetric = "precipitation"
-	HourlyCloudCover  HourlyMetric = "cloud_cover"
-	HourlyWindSpeed   HourlyMetric = "wind_speed_10m"
-	HourlyWindDir     HourlyMetric = "wind_direction_10m"
-	HourlyWindGusts   HourlyMetric = "wind_gusts_10m"
+	HourlyWeatherCode  HourlyMetric = "weather_code"
+	HourlyTemp         HourlyMetric = "temperature_2m"
+	HourlyApparentTemp HourlyMetric = "apparent_temperature"
+	HourlyRH           HourlyMetric = "relative_humidity_2m"
+	HourlyPrecipProb   HourlyMetric = "precipitation_probability"
+	HourlyPrecip       HourlyMetric = "precipitation"
+	HourlyCloudCover   HourlyMetric = "cloud_cover"
+	HourlyWindSpeed    HourlyMetric = "wind_speed_10m"
+	HourlyWindDir      HourlyMetric = "wind_direction_10m"
+	HourlyWindGusts    HourlyMetric = "wind_gusts_10m"
 )
 
 type DailyMetric string
@@ -61,15 +63,16 @@ const (
 )
 
 var aggregators = map[HourlyMetric]agg.Aggregator{
-	HourlyWeatherCode: &agg.Point{},
-	HourlyTemp:        &agg.Point{},
-	HourlyRH:          &agg.Point{},
-	HourlyPrecipProb:  &agg.Max{},
-	HourlyPrecip:      &agg.Sum{},
-	HourlyCloudCover:  &agg.Max{},
-	HourlyWindSpeed:   &agg.Max{},
-	HourlyWindGusts:   &agg.Max{},
-	HourlyWindDir:     &agg.Point{},
+	HourlyWeatherCode:  &agg.Point{},
+	HourlyTemp:         &agg.Point{},
+	HourlyApparentTemp: &agg.Point{},
+	HourlyRH:           &agg.Point{},
+	HourlyPrecipProb:   &agg.Max{},
+	HourlyPrecip:       &agg.Sum{},
+	HourlyCloudCover:   &agg.Max{},
+	HourlyWindSpeed:    &agg.Max{},
+	HourlyWindGusts:    &agg.Max{},
+	HourlyWindDir:      &agg.Point{},
 }
 
 type Options interface {

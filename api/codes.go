@@ -19,7 +19,7 @@ func init() {
 	}
 }
 
-var codeText = map[int]string{
+/*var codeText = map[int]string{
 	0:  "clear sky",
 	1:  "mainly clear",
 	2:  "partly cloudy",
@@ -49,9 +49,14 @@ var codeText = map[int]string{
 	96: "slight thunderstorm w/ hail",
 	97: "heavy thunderstorm",
 	99: "heavy thunderstorm w/ hail",
-}
+}*/
 
 func WeatherCodeText(code int) (string, bool) {
-	s, ok := codeText[code]
-	return s, ok
+	s, ok := codes[code]
+	return s.Name, ok
+}
+
+func WeatherCodeSymbol(code int) (string, bool) {
+	s, ok := codes[code]
+	return s.Symbol, ok
 }
