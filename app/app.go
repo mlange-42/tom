@@ -93,9 +93,16 @@ func gridLayout(a *App) ([]container.Option, error) {
 		return nil, err
 	}
 
+	var now time.Time
+	loc, err := time.LoadLocation(a.data.Location.TimeZone)
+	if err == nil {
+		now = time.Now().In(loc)
+	}
+
 	currentLabel.Write(
-		fmt.Sprintf("%s (%0.2f°N, %0.2f°E) | %s",
+		fmt.Sprintf("%s (%0.2f°N, %0.2f°E)  %s | %s",
 			a.location, a.data.Location.Lat, a.data.Location.Lon,
+			now.Format(api.TimeLayout),
 			formatCurrent(a.data),
 		))
 
@@ -117,7 +124,7 @@ func gridLayout(a *App) ([]container.Option, error) {
 	}*/
 	for i := 0; i < len(a.data.HourlyTime); i++ {
 		t := a.data.HourlyTime[i]
-		xLabels[i] = t.Format(api.TimeLayoutShort)
+		xLabels[i] = t.Format(api.DateTimeLayoutShort)
 	}
 
 	linesTemp, err := linechart.New()

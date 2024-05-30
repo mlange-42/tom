@@ -98,7 +98,7 @@ func ParseMeteo(data []byte, opt *ForecastOptions) (*MeteoResult, error) {
 
 	var err error
 	current := CurrentWeather{Values: map[string]float64{}}
-	current.Time, err = time.Parse(TimeLayout, m.Current["time"].(string))
+	current.Time, err = time.Parse(DateTimeLayout, m.Current["time"].(string))
 	if err != nil {
 		return nil, err
 	}
@@ -168,7 +168,7 @@ func parseHourly(m *meteoResultJs, metrics []HourlyMetric) ([]time.Time, map[str
 	}
 	hourlyTime := make([]time.Time, len(timeStr))
 	for i, v := range timeStr {
-		hourlyTime[i], err = time.Parse(TimeLayout, v)
+		hourlyTime[i], err = time.Parse(DateTimeLayout, v)
 		if err != nil {
 			return nil, nil, err
 		}
