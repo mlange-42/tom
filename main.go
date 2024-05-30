@@ -57,6 +57,7 @@ func GetMeteo(loc api.Location) (*api.MeteoResult, error) {
 		CurrentMetrics: []api.CurrentMetric{
 			api.CurrentWeatherCode,
 			api.CurrentTemp,
+			api.CurrentApparentTemp,
 			api.CurrentPrecip,
 			api.CurrentCloudCover,
 			api.CurrentWindSpeed,
@@ -66,6 +67,7 @@ func GetMeteo(loc api.Location) (*api.MeteoResult, error) {
 		HourlyMetrics: []api.HourlyMetric{
 			api.HourlyWeatherCode,
 			api.HourlyTemp,
+			api.HourlyApparentTemp,
 			api.HourlyPrecip,
 			api.HourlyPrecipProb,
 			api.HourlyRH,
