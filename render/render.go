@@ -22,9 +22,12 @@ func NewRenderer(data *config.MeteoResult) Renderer {
 
 func (r *Renderer) DaySixHourly(index int) string {
 	layout := make([][]rune, len(data.Layout))
+	colors := make([][]uint8, len(data.Layout))
 	for i, runes := range data.Layout {
 		layout[i] = append(layout[i], runes...)
+		colors[i] = make([]uint8, len(runes))
 	}
+
 	layoutWidth := len(layout[0])
 	boxWidth := (layoutWidth-1)/4 - 1
 	yOffset := 1
@@ -48,12 +51,11 @@ func (r *Renderer) DaySixHourly(index int) string {
 		code := int(codes[idx])
 		codeProps, ok := data.WeatherCodes[code]
 		if !ok {
-			panic(fmt.Sprintf("unknown weather code %d", code))
-			//codeProps = data.WeatherCodes[0]
+			log.Fatalf("unknown weather code %d", code)
 		}
 
 		x := 1 + (boxWidth+1)*i
-		for j, line := range codeProps.SymbolRunes {
+		for j, line := range codeProps.Symbol {
 			copy(layout[j+yOffset+1][x:x+len(line)], line)
 		}
 
@@ -64,7 +66,7 @@ func (r *Renderer) DaySixHourly(index int) string {
 			fmt.Sprintf("%3dkm/h %-2s", int(math.Round(wind[idx])), config.Direction(windDir[idx])),
 			fmt.Sprintf("%3d%%CC %3d%%RH", int(math.Round(clouds[idx])), int(math.Round(humidity[idx]))),
 		}
-		symWidth := len(codeProps.SymbolRunes[0])
+		symWidth := len(codeProps.Symbol[0])
 		x += 1
 		for j, line := range text {
 			maxLen := boxWidth - (symWidth + 1)
