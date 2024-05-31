@@ -26,5 +26,5 @@ func main() {
 	}
 
 	a := app.New(strings.ToTitle(loc), meteo)
-	a.Run(app.TCellTerminal)
+	a.Run()
 }
