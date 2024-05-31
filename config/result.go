@@ -1,4 +1,4 @@
-package api
+package config
 
 import (
 	"bytes"
@@ -127,13 +127,13 @@ func ParseMeteo(data []byte, opt *ForecastOptions) (*MeteoResult, error) {
 	threeHourlyTime := agg.AggregateTime(hourlyTime, 3, 1)
 	threeHourly := map[string][]float64{}
 	for _, key := range opt.HourlyMetrics {
-		threeHourly[string(key)] = aggregators[key].Aggregate(hourly[string(key)], 3, 1)
+		threeHourly[string(key)] = Aggregators[key].Aggregate(hourly[string(key)], 3, 1)
 	}
 
 	sixHourlyTime := agg.AggregateTime(hourlyTime, 6, 0)
 	sixHourly := map[string][]float64{}
 	for _, key := range opt.HourlyMetrics {
-		sixHourly[string(key)] = aggregators[key].Aggregate(hourly[string(key)], 6, 0)
+		sixHourly[string(key)] = Aggregators[key].Aggregate(hourly[string(key)], 6, 0)
 	}
 
 	return &MeteoResult{
