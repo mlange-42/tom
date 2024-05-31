@@ -15,17 +15,21 @@ func main() {
 	}
 	location := strings.ToLower(os.Args[1])
 
+	forceApi := strings.HasSuffix(location, "?")
+	location = strings.TrimSuffix(location, "?")
+
 	cached, err := config.LoadLocations()
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	coords, ok := cached[location]
-	if ok {
+	if ok && !forceApi {
 		a := app.New(strings.ToTitle(location), coords)
 		a.Run()
 		return
 	}
+
 	a := app.NewLocationDialog(location, cached)
 	a.Run()
 }

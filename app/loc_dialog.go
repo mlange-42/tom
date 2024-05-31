@@ -30,8 +30,17 @@ func (d *LocationDialog) Run() error {
 		return err
 	}
 
-	app := tview.NewApplication()
+	if len(locations) == 1 {
+		coords, err := d.updateCache(&locations[0])
+		if err != nil {
+			log.Fatal(err)
+		}
+		a := New(strings.ToTitle(d.location), coords)
+		a.Run()
+		return nil
+	}
 
+	app := tview.NewApplication()
 	data := &LocationTable{Locations: locations}
 	table := tview.NewTable().
 		SetBorders(false).
@@ -49,17 +58,11 @@ func (d *LocationDialog) Run() error {
 			row, _ := table.GetSelection()
 			loc := locations[row]
 
-			coords := config.Location{
-				Lat:      loc.Latitude,
-				Lon:      loc.Longitude,
-				TimeZone: loc.TimeZone,
-			}
-
-			d.cached[d.location] = coords
-			err = config.SaveLocations(d.cached)
+			coords, err := d.updateCache(&loc)
 			if err != nil {
 				log.Fatal(err)
 			}
+
 			a := New(strings.ToTitle(d.location), coords)
 			a.Run()
 			return nil
@@ -70,8 +73,22 @@ func (d *LocationDialog) Run() error {
 	if err := app.SetRoot(table, true).Run(); err != nil {
 		panic(err)
 	}
-
 	return nil
+}
+
+func (d *LocationDialog) updateCache(loc *config.GeoResultEntry) (config.Location, error) {
+	coords := config.Location{
+		Lat:      loc.Latitude,
+		Lon:      loc.Longitude,
+		TimeZone: loc.TimeZone,
+	}
+
+	d.cached[d.location] = coords
+	err := config.SaveLocations(d.cached)
+	if err != nil {
+		return coords, err
+	}
+	return coords, nil
 }
 
 type LocationTable struct {
