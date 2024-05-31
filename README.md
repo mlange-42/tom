@@ -1,9 +1,11 @@
 # Tom -- Terminal for Open-Meteo
 
-Very early work in progress!
-
 An interactive terminal user interface (TUI) weather app.
 Based on data from [Open-Meteo](https://open-meteo.com/).
+
+Very early work in progress!
+
+![screenshot](https://github.com/mlange-42/tom/assets/44003176/e5009710-16ec-402a-b3d5-272a5b99916c)
 
 ## Installation & Usage
 

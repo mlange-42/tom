@@ -9,7 +9,6 @@ import (
 	"github.com/mlange-42/tom/render"
 	"github.com/mum4k/termdash"
 	"github.com/mum4k/termdash/container"
-	"github.com/mum4k/termdash/container/grid"
 	"github.com/mum4k/termdash/keyboard"
 	"github.com/mum4k/termdash/linestyle"
 	"github.com/mum4k/termdash/terminal/tcell"
@@ -32,6 +31,9 @@ const (
 type App struct {
 	location string
 	data     *api.MeteoResult
+
+	current  *text.Text
+	forecast *text.Text
 }
 
 func New(location string, data *api.MeteoResult) *App {
@@ -61,12 +63,16 @@ func (a *App) Run(term string) error {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
+	if err := a.createWidgets(); err != nil {
+		panic(err)
+	}
+
 	c, err := container.New(t, container.ID(rootID))
 	if err != nil {
 		panic(err)
 	}
 
-	gridOpts, err := gridLayout(a)
+	gridOpts, err := contLayout(a)
 	if err != nil {
 		panic(err)
 	}
@@ -87,10 +93,11 @@ func (a *App) Run(term string) error {
 	return nil
 }
 
-func gridLayout(a *App) ([]container.Option, error) {
-	currentLabel, err := text.New()
+func (a *App) createWidgets() error {
+	var err error
+	a.current, err = text.New()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	var now time.Time
@@ -99,48 +106,45 @@ func gridLayout(a *App) ([]container.Option, error) {
 		now = time.Now().In(loc)
 	}
 
-	currentLabel.Write(
+	renderer := render.NewRenderer(a.data)
+
+	a.current.Write(
 		fmt.Sprintf("%s (%0.2f°N, %0.2f°E)  %s | %s",
 			a.location, a.data.Location.Lat, a.data.Location.Lon,
 			now.Format(api.TimeLayout),
-			formatCurrent(a.data),
+			renderer.Current(),
 		))
 
-	forecastLabel, err := text.New()
+	a.forecast, err = text.New(text.ScrollRunes('↑', '↓'))
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	renderer := render.NewRenderer(a.data)
-	for i, t := range a.data.SixHourlyTime {
-		if t.Hour() == 0 {
-			forecastLabel.Write(fmt.Sprintf("%s\n", t.Format(api.DateLayoutShort)))
-			forecastLabel.Write(renderer.Day(i) + "\n")
-		}
-		//forecastLabel.Write(fmt.Sprintf("  %2d:00  %s\n", t.Hour(), formatSixHourly(a.data, i)))
+	for i, t := range a.data.DailyTime {
+		a.forecast.Write(fmt.Sprintf("%-11s | %s\n", t.Format(api.DateLayoutShort), renderer.DaySummary(i)))
+		a.forecast.Write(renderer.DaySixHourly(i*4) + "\n")
 	}
 
-	rows := []grid.Element{
-		grid.RowHeightFixed(3,
-			grid.Widget(currentLabel,
+	return nil
+}
+
+func contLayout(a *App) ([]container.Option, error) {
+	rows := []container.Option{
+		container.SplitHorizontal(
+			container.Top(
 				container.Border(linestyle.Light),
-				container.BorderTitle("Press Esc to quit"),
+				container.BorderTitle("Current───Press Esc to quit"),
+				container.PlaceWidget(a.current),
 			),
-		),
-		grid.RowHeightFixed(1,
-			grid.Widget(forecastLabel,
+			container.Bottom(
 				container.Border(linestyle.Light),
-				container.BorderTitle("Forecast"),
+				container.BorderTitle("Forecast───Scroll with mouse or arrow keys"),
+				container.PlaceWidget(a.forecast),
+				container.Focused(),
 			),
+			container.SplitFixed(3),
 		),
 	}
 
-	builder := grid.New()
-	builder.Add(rows...)
-
-	gridOpts, err := builder.Build()
-	if err != nil {
-		return nil, err
-	}
-	return gridOpts, nil
+	return rows, nil
 }
