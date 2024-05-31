@@ -5,13 +5,13 @@ import (
 	"time"
 )
 
-func AggregateTime(t []time.Time, step int) []time.Time {
+func AggregateTime(t []time.Time, step int, point int) []time.Time {
 	ln := len(t) / step
 
 	times := make([]time.Time, ln)
 
 	for i := 0; i < ln; i++ {
-		idx := i * step
+		idx := i*step + point
 		times[i] = t[idx]
 	}
 
@@ -19,18 +19,18 @@ func AggregateTime(t []time.Time, step int) []time.Time {
 }
 
 type Aggregator interface {
-	Aggregate(data []float64, step int, past int, future int) []float64
+	Aggregate(data []float64, step int, point int) []float64
 }
 
 type Point struct{}
 
-func (a *Point) Aggregate(data []float64, step int, past int, future int) []float64 {
+func (a *Point) Aggregate(data []float64, step int, point int) []float64 {
 	ln := len(data) / step
 
 	values := make([]float64, ln)
 
 	for i := 0; i < ln; i++ {
-		idx := i * step
+		idx := i*step + point
 		values[i] = data[idx]
 	}
 
@@ -39,15 +39,15 @@ func (a *Point) Aggregate(data []float64, step int, past int, future int) []floa
 
 type Max struct{}
 
-func (a *Max) Aggregate(data []float64, step int, past int, future int) []float64 {
+func (a *Max) Aggregate(data []float64, step int, point int) []float64 {
 	ln := len(data) / step
 
 	values := make([]float64, ln)
 
 	for i := 0; i < ln; i++ {
 		idx := i * step
-		start := idx - past
-		end := idx + future + 1
+		start := idx
+		end := idx + step
 		if start < 0 {
 			start = 0
 		}
@@ -70,15 +70,15 @@ func (a *Max) Aggregate(data []float64, step int, past int, future int) []float6
 
 type Sum struct{}
 
-func (a *Sum) Aggregate(data []float64, step int, past int, future int) []float64 {
+func (a *Sum) Aggregate(data []float64, step int, point int) []float64 {
 	ln := len(data) / step
 
 	values := make([]float64, ln)
 
 	for i := 0; i < ln; i++ {
 		idx := i * step
-		start := idx - past
-		end := idx + future + 1
+		start := idx
+		end := idx + step
 		if start < 0 {
 			start = 0
 		}
@@ -99,15 +99,15 @@ func (a *Sum) Aggregate(data []float64, step int, past int, future int) []float6
 
 type Avg struct{}
 
-func (a *Avg) Aggregate(data []float64, step int, past int, future int) []float64 {
+func (a *Avg) Aggregate(data []float64, step int, point int) []float64 {
 	ln := len(data) / step
 
 	values := make([]float64, ln)
 
 	for i := 0; i < ln; i++ {
 		idx := i * step
-		start := idx - past
-		end := idx + future + 1
+		start := idx
+		end := idx + step
 		if start < 0 {
 			start = 0
 		}
@@ -123,6 +123,56 @@ func (a *Avg) Aggregate(data []float64, step int, past int, future int) []float6
 		}
 
 		values[i] = sum / float64(cnt)
+	}
+
+	return values
+}
+
+type ModeOrMax struct{}
+
+func (a *ModeOrMax) Aggregate(data []float64, step int, point int) []float64 {
+	ln := len(data) / step
+
+	values := make([]float64, ln)
+	tempValues := map[float64]int{}
+
+	for i := 0; i < ln; i++ {
+		idx := i * step
+		start := idx
+		end := idx + step
+		if start < 0 {
+			start = 0
+		}
+		if end > len(data) {
+			end = len(data)
+		}
+
+		vByValue := data[idx+point]
+		for j := start; j < end; j++ {
+			v := data[j]
+			if cnt, ok := tempValues[v]; ok {
+				tempValues[v] = cnt + 1
+			} else {
+				tempValues[v] = 1
+			}
+			if v > vByValue {
+				vByValue = v
+			}
+		}
+		vByCnt := data[idx+point]
+		cntMax := 1
+		for v, cnt := range tempValues {
+			if cnt > cntMax {
+				vByCnt = v
+			}
+		}
+		if cntMax <= 1 {
+			values[i] = vByValue
+		} else {
+			values[i] = vByCnt
+		}
+
+		clear(tempValues)
 	}
 
 	return values

@@ -124,16 +124,16 @@ func ParseMeteo(data []byte, opt *ForecastOptions) (*MeteoResult, error) {
 		return nil, err
 	}
 
-	threeHourlyTime := agg.AggregateTime(hourlyTime, 3)
+	threeHourlyTime := agg.AggregateTime(hourlyTime, 3, 1)
 	threeHourly := map[string][]float64{}
 	for _, key := range opt.HourlyMetrics {
-		threeHourly[string(key)] = aggregators[key].Aggregate(hourly[string(key)], 3, 1, 1)
+		threeHourly[string(key)] = aggregators[key].Aggregate(hourly[string(key)], 3, 1)
 	}
 
-	sixHourlyTime := agg.AggregateTime(hourlyTime, 6)
+	sixHourlyTime := agg.AggregateTime(hourlyTime, 6, 0)
 	sixHourly := map[string][]float64{}
 	for _, key := range opt.HourlyMetrics {
-		sixHourly[string(key)] = aggregators[key].Aggregate(hourly[string(key)], 6, 2, 3)
+		sixHourly[string(key)] = aggregators[key].Aggregate(hourly[string(key)], 6, 0)
 	}
 
 	return &MeteoResult{

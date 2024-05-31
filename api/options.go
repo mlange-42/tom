@@ -63,7 +63,7 @@ const (
 )
 
 var aggregators = map[HourlyMetric]agg.Aggregator{
-	HourlyWeatherCode:  &agg.Point{},
+	HourlyWeatherCode:  &agg.ModeOrMax{},
 	HourlyTemp:         &agg.Point{},
 	HourlyApparentTemp: &agg.Point{},
 	HourlyRH:           &agg.Point{},
