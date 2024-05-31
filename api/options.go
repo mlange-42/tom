@@ -69,7 +69,7 @@ var aggregators = map[HourlyMetric]agg.Aggregator{
 	HourlyRH:           &agg.Point{},
 	HourlyPrecipProb:   &agg.Max{},
 	HourlyPrecip:       &agg.Sum{},
-	HourlyCloudCover:   &agg.Point{},
+	HourlyCloudCover:   &agg.Avg{},
 	HourlyWindSpeed:    &agg.Max{},
 	HourlyWindGusts:    &agg.Max{},
 	HourlyWindDir:      &agg.Point{},
