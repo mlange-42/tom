@@ -2,16 +2,28 @@
   name: clear sky
   symbol: |-
     |   \   /   |
-    |    .-.    |
-    | - (   ) - |
-    |    '-'    |
+    |    ,-.    |
+    | - |   | - |
+    |    `-´    |
     |   /   \   |
+  color: |-
+    |yyyyyyyyyyy|
+    |yyyyyyyyyyy|
+    |yyyyyyyyyyy|
+    |yyyyyyyyyyy|
+    |yyyyyyyyyyy|
 1:
   name: mainly clear
   symbol: |-
     |_`/""\´_   |
     | ,\__/ .-. |
     |  /  \(___)|
+    |           |
+    |           |
+  color: |-
+    |yyyyyyyy   |
+    | yyyyy     |
+    |  yyyy     |
     |           |
     |           |
 2:
@@ -22,12 +34,24 @@
     |  /(___(__)|
     |           |
     |           |
+  color: |-
+    |yyyyy      |
+    | yyy       |
+    |  y        |
+    |           |
+    |           |
 3:
   name: overcast
   symbol: |-
     |    .--.   |
     | .-(    ). |
     |(___.__(__)|
+    |           |
+    |           |
+  color: |-
+    |           |
+    |           |
+    |           |
     |           |
     |           |
 45:
@@ -38,6 +62,12 @@
     |  _-_-_-_- |
     | _-_-_-_-  |
     |           |
+  color: |-
+    |           |
+    |           |
+    |           |
+    |           |
+    |           |
 48:
   name: depositing rime fog
   symbol: |-
@@ -46,6 +76,12 @@
     |  _-_-_-_- |
     | _-_-_-_-  |
     | ________! |
+  color: |-
+    |           |
+    |           |
+    |           |
+    |           |
+    |         r |
 51:
   name: light drizzle
   symbol: |-
@@ -54,6 +90,12 @@
     |  (___(__) |
     |    .  .   |
     |    .  .   |
+  color: |-
+    |           |
+    |           |
+    |           |
+    |bbbbbbbbbbb|
+    |bbbbbbbbbbb|
 53:
   name: moderate drizzle
   symbol: |-
@@ -62,6 +104,12 @@
     |  (___(__) |
     |  .  .  .  |
     |  .  .  .  |
+  color: |-
+    |           |
+    |           |
+    |           |
+    |bbbbbbbbbbb|
+    |bbbbbbbbbbb|
 55:
   name: dense drizzle
   symbol: |-
@@ -70,6 +118,12 @@
     |  (___(__) |
     |  . . . .  |
     |  . . . .  |
+  color: |-
+    |           |
+    |           |
+    |           |
+    |bbbbbbbbbbb|
+    |bbbbbbbbbbb|
 56:
   name: light freezing drizzle
   symbol: |-
@@ -77,7 +131,13 @@
     |   (   ).  |
     |  (___(__) |
     |    .  .   |
-    | ___.__._! |
+    |____.__.__!|
+  color: |-
+    |           |
+    |           |
+    |           |
+    |bbbbbbbbbbb|
+    |bbbbbbbbbbr|
 57:
   name: dense freezing drizzle
   symbol: |-
@@ -85,7 +145,13 @@
     |   (   ).  |
     |  (___(__) |
     |  . . . .  |
-    | _._._._.! |
+    | _._._._._!|
+  color: |-
+    |           |
+    |           |
+    |           |
+    |bbbbbbbbbbb|
+    |bbbbbbbbbbr|
 61:
   name: light rain
   symbol: |-
@@ -94,6 +160,12 @@
     |(___.__(__)|
     |  ,  ,  ,  |
     | ,  ,  ,   |
+  color: |-
+    |           |
+    |           |
+    |           |
+    |bbbbbbbbbbb|
+    |bbbbbbbbbbb|
 63:
   name: moderate rain
   symbol: |-
@@ -102,6 +174,12 @@
     |(___.__(__)|
     |  , , , ,  |
     | , , , ,   |
+  color: |-
+    |           |
+    |           |
+    |           |
+    |bbbbbbbbbbb|
+    |bbbbbbbbbbb|
 65:
   name: heavy rain
   symbol: |-
@@ -110,6 +188,12 @@
     |(___.__(__)|
     |  ,, ,, ,, |
     | ,, ,, ,,  |
+  color: |-
+    |           |
+    |           |
+    |           |
+    |bbbbbbbbbbb|
+    |bbbbbbbbbbb|
 66:
   name: light freezing rain
   symbol: |-
@@ -118,6 +202,12 @@
     |(___.__(__)|
     |  ,  ,  ,  |
     |_,__,__,__!|
+  color: |-
+    |           |
+    |           |
+    |           |
+    |bbbbbbbbbbb|
+    |bbbbbbbbbbr|
 67:
   name: heavy freezing rain
   symbol: |-
@@ -126,6 +216,12 @@
     |(___.__(__)|
     |  ,, ,, ,, |
     |_,,_,,_,,_!|
+  color: |-
+    |           |
+    |           |
+    |           |
+    |bbbbbbbbbbb|
+    |bbbbbbbbbbr|
 71:
   name: light snowfall
   symbol: |-
@@ -134,6 +230,12 @@
     |(___.__(__)|
     |  *  *  *  |
     |  *  *  *  |
+  color: |-
+    |           |
+    |           |
+    |           |
+    |           |
+    |           |
 73:
   name: moderate snowfall
   symbol: |-
@@ -142,6 +244,12 @@
     |(___.__(__)|
     | * * * * * |
     | * * * * * |
+  color: |-
+    |           |
+    |           |
+    |           |
+    |           |
+    |           |
 75:
   name: heavy snowfall
   symbol: |-
@@ -150,6 +258,12 @@
     |(___.__(__)|
     | ** *** ** |
     | ***** *** |
+  color: |-
+    |           |
+    |           |
+    |           |
+    |           |
+    |           |
 77:
   name: snow grains
   symbol: |-
@@ -158,6 +272,12 @@
     |(___.__(__)|
     | * ° * ° * |
     | ° * ° * ° |
+  color: |-
+    |           |
+    |           |
+    |           |
+    |           |
+    |           |
 80:
   name: slight rain showers
   symbol: |-
@@ -166,6 +286,12 @@
     |  /(___(__)|
     |   ,  ,  , |
     |  ,  ,  ,  |
+  color: |-
+    |yyyyy      |
+    |yyyy       |
+    |yyy        |
+    |bbbbbbbbbbb|
+    |bbbbbbbbbbb|
 81:
   name: moderate rain showers
   symbol: |-
@@ -174,6 +300,12 @@
     |  /(___(__)|
     |   , , , , |
     |  , , , ,  |
+  color: |-
+    |yyyyy      |
+    |yyyy       |
+    |yyy        |
+    |bbbbbbbbbbb|
+    |bbbbbbbbbbb|
 82:
   name: violent rain showers
   symbol: |-
@@ -182,6 +314,12 @@
     |  /(___(__)|
     |  ,, ,, ,, |
     | ,, ,, ,,  |
+  color: |-
+    |yyyyy      |
+    |yyyy       |
+    |yyy        |
+    |bbbbbbbbbbb|
+    |bbbbbbbbbbb|
 85:
   name: slight snow showers
   symbol: |-
@@ -190,6 +328,12 @@
     |  /(___(__)|
     |   *  *  * |
     |   *  *  * |
+  color: |-
+    |yyyyy      |
+    | yyy       |
+    |  y        |
+    |           |
+    |           |
 86:
   name: heavy snow showers
   symbol: |-
@@ -198,6 +342,12 @@
     |  /(___(__)|
     |   ** **** |
     |   **** ** |
+  color: |-
+    |yyyyy      |
+    | yyy       |
+    |  y        |
+    |           |
+    |           |
 95:
   name: slight thunderstorm
   symbol: |-
@@ -206,6 +356,12 @@
     |(___.__(__)|
     |  ,  , /_  |
     | ,  ,   /  |
+  color: |-
+    |           |
+    |           |
+    |           |
+    |bbbbbbbyyyy|
+    |bbbbbbbbyyy|
 96:
   name: slight thunderstorm w/ hail
   symbol: |-
@@ -214,6 +370,12 @@
     |(___.__(__)|
     |  °  ° /_  |
     | °  °   /  |
+  color: |-
+    |           |
+    |           |
+    |           |
+    |bbbbbbbyyyy|
+    |bbbbbbbbyyy|
 97:
   name: heavy thunderstorm
   symbol: |-
@@ -222,6 +384,12 @@
     |(___.__(__)|
     | ,, ,, /_  |
     |,, ,,   /  |
+  color: |-
+    |           |
+    |           |
+    |           |
+    |bbbbbbbyyyy|
+    |bbbbbbbbyyy|
 98:
   name: heavy thunderstorm w/ hail
   symbol: |-
@@ -230,3 +398,9 @@
     |(___.__(__)|
     | °° °° /_  |
     |°° °°   /  |
+  color: |-
+    |           |
+    |           |
+    |           |
+    |bbbbbbbyyyy|
+    |bbbbbbbbyyy|
