@@ -7,6 +7,7 @@ import (
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/mlange-42/tom/config"
+	"github.com/mlange-42/tom/data"
 	"github.com/mlange-42/tom/render"
 	"github.com/rivo/tview"
 )
@@ -34,8 +35,8 @@ func (a *App) Run() error {
 	pages := tview.NewPages()
 
 	grid := tview.NewGrid().
-		SetRows(3, 0).
-		SetColumns(0).
+		SetRows(3, 0, 1).
+		SetColumns(len(data.Layout[0]) + 2).
 		SetBorders(false)
 
 	renderer := render.NewRenderer(a.data)
@@ -49,7 +50,7 @@ func (a *App) Run() error {
 				renderer.Current(),
 			))
 	current.SetBorder(true)
-	current.SetTitle(" Current weather -- Press Esc to exit ")
+	current.SetTitle(" Current weather ")
 	grid.AddItem(current, 0, 0, 1, 1, 0, 0, false)
 
 	builder := strings.Builder{}
@@ -69,6 +70,11 @@ func (a *App) Run() error {
 	forecast.SetTitle(" 7 days forecast ")
 
 	grid.AddItem(forecast, 1, 0, 1, 1, 0, 0, true)
+
+	help := tview.NewTextView().
+		SetWrap(false).
+		SetText("Exit: Esc  Focus: Tab  Scroll: ←→↕")
+	grid.AddItem(help, 2, 0, 1, 1, 0, 0, false)
 
 	pages.AddAndSwitchToPage("forecast", grid, true)
 
