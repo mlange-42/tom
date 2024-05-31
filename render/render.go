@@ -2,6 +2,7 @@ package render
 
 import (
 	"fmt"
+	"log"
 	"math"
 	"strings"
 
@@ -19,7 +20,7 @@ func NewRenderer(data *api.MeteoResult) Renderer {
 	}
 }
 
-func (r *Renderer) Day(index int) string {
+func (r *Renderer) DaySixHourly(index int) string {
 	layout := make([][]rune, len(data.Layout))
 	for i, runes := range data.Layout {
 		layout[i] = append(layout[i], runes...)
@@ -84,6 +85,43 @@ func (r *Renderer) Day(index int) string {
 	}
 
 	return strings.Join(result, "\n")
+}
+
+func (r *Renderer) DaySummary(index int) string {
+	code := int(r.data.GetDaily(api.DailyWeatherCode)[index])
+	codeProps, ok := data.WeatherCodes[code]
+	if !ok {
+		log.Fatalf("unknown weather code %d", code)
+	}
+
+	return fmt.Sprintf(
+		"%-27s %2d-%2d°C  %4.1fmm (%d%%)  %3dkm/h %-2s",
+		codeProps.Name,
+		int(math.Round(r.data.GetDaily(api.DailyMinTemp)[index])),
+		int(math.Round(r.data.GetDaily(api.DailyMaxTemp)[index])),
+		r.data.GetDaily(api.DailyPrecip)[index],
+		int(math.Round(r.data.GetDaily(api.DailyPrecipProb)[index])),
+		int(r.data.GetDaily(api.DailyWindSpeed)[index]),
+		api.Direction(r.data.GetDaily(api.DailyWindDir)[index]),
+	)
+}
+
+func (r *Renderer) Current() string {
+	code := int(r.data.GetCurrent(api.CurrentWeatherCode))
+	codeProps, ok := data.WeatherCodes[code]
+	if !ok {
+		log.Fatalf("unknown weather code %d", code)
+	}
+
+	return fmt.Sprintf(
+		"%s %3d°C  %4.1fmm  %3dkm/h %-2s  %3d%%CC  %3d%%RH",
+		codeProps.Name, int(math.Round(r.data.GetCurrent(api.CurrentTemp))),
+		r.data.GetCurrent(api.CurrentPrecip),
+		int(r.data.GetCurrent(api.CurrentWindSpeed)),
+		api.Direction(r.data.GetCurrent(api.CurrentWindDir)),
+		int(r.data.GetCurrent(api.CurrentCloudCover)),
+		int(r.data.GetCurrent(api.CurrentRH)),
+	)
 }
 
 func MinInt(a, b int) int {
