@@ -59,7 +59,7 @@ func (r *Renderer) DaySixHourly(index int) string {
 		text := []string{
 			fmt.Sprintf("%-5s %s", r.data.SixHourlyTime[idx].Format(api.TimeLayout), codeProps.Name),
 			fmt.Sprintf("%2d (%2d) °C", int(math.Round(temp[idx])), int(math.Round(appTemp[idx]))),
-			fmt.Sprintf("%2dmm (%3d%%)", int(math.Round(precip[idx])), int(math.Round(precipProb[idx]))),
+			fmt.Sprintf("%4.1fmm/%3d%%", precip[idx], int(math.Round(precipProb[idx]))),
 			fmt.Sprintf("%3dkm/h %-2s", int(math.Round(wind[idx])), api.Direction(windDir[idx])),
 			fmt.Sprintf("%3d%%CC %3d%%RH", int(math.Round(clouds[idx])), int(math.Round(humidity[idx]))),
 		}
@@ -95,7 +95,7 @@ func (r *Renderer) DaySummary(index int) string {
 	}
 
 	return fmt.Sprintf(
-		"%-27s %2d-%2d°C  %4.1fmm (%d%%)  %3dkm/h %-2s",
+		"%-27s %2d-%2d°C  %4.1fmm/%3d%%  %3dkm/h %-2s",
 		codeProps.Name,
 		int(math.Round(r.data.GetDaily(api.DailyMinTemp)[index])),
 		int(math.Round(r.data.GetDaily(api.DailyMaxTemp)[index])),
