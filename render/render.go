@@ -31,6 +31,7 @@ func (r *Renderer) DaySixHourly(index int) string {
 
 	_ = boxWidth
 
+	timeStart := r.data.SixHourlyTime
 	codes := r.data.GetSixHourly(api.HourlyWeatherCode)
 	temp := r.data.GetSixHourly(api.HourlyTemp)
 	appTemp := r.data.GetSixHourly(api.HourlyApparentTemp)
@@ -57,7 +58,7 @@ func (r *Renderer) DaySixHourly(index int) string {
 		}
 
 		text := []string{
-			fmt.Sprintf("%-5s %s", r.data.SixHourlyTime[idx].Format(api.TimeLayout), codeProps.Name),
+			fmt.Sprintf("%-5s %s", timeStart[idx].Format(api.TimeLayout), codeProps.Name),
 			fmt.Sprintf("%2d (%2d) °C", int(math.Round(temp[idx])), int(math.Round(appTemp[idx]))),
 			fmt.Sprintf("%4.1fmm/%3d%%", precip[idx], int(math.Round(precipProb[idx]))),
 			fmt.Sprintf("%3dkm/h %-2s", int(math.Round(wind[idx])), api.Direction(windDir[idx])),
