@@ -128,9 +128,9 @@ func (a *Avg) Aggregate(data []float64, step int, point int) []float64 {
 	return values
 }
 
-type ModeOrPoint struct{}
+type ModeOrMax struct{}
 
-func (a *ModeOrPoint) Aggregate(data []float64, step int, point int) []float64 {
+func (a *ModeOrMax) Aggregate(data []float64, step int, point int) []float64 {
 	ln := len(data) / step
 
 	values := make([]float64, ln)
