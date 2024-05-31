@@ -20,11 +20,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	meteo, err := api.GetMeteo(coords)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	a := app.New(strings.ToTitle(loc), meteo)
+	a := app.New(strings.ToTitle(loc), coords)
 	a.Run()
 }
