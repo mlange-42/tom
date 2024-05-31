@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/mlange-42/tom/api"
+	"github.com/mlange-42/tom/config"
 	"github.com/mlange-42/tom/render"
 	"github.com/mum4k/termdash"
 	"github.com/mum4k/termdash/container"
@@ -30,13 +30,13 @@ const (
 
 type App struct {
 	location string
-	data     *api.MeteoResult
+	data     *config.MeteoResult
 
 	current  *text.Text
 	forecast *text.Text
 }
 
-func New(location string, data *api.MeteoResult) *App {
+func New(location string, data *config.MeteoResult) *App {
 	return &App{
 		location: location,
 		data:     data,
@@ -111,7 +111,7 @@ func (a *App) createWidgets() error {
 	a.current.Write(
 		fmt.Sprintf("%s (%0.2f°N, %0.2f°E)  %s | %s",
 			a.location, a.data.Location.Lat, a.data.Location.Lon,
-			now.Format(api.TimeLayout),
+			now.Format(config.TimeLayout),
 			renderer.Current(),
 		))
 
@@ -121,7 +121,7 @@ func (a *App) createWidgets() error {
 	}
 
 	for i, t := range a.data.DailyTime {
-		a.forecast.Write(fmt.Sprintf("%-11s | %s\n", t.Format(api.DateLayoutShort), renderer.DaySummary(i)))
+		a.forecast.Write(fmt.Sprintf("%-11s | %s\n", t.Format(config.DateLayoutShort), renderer.DaySummary(i)))
 		a.forecast.Write(renderer.DaySixHourly(i*4) + "\n")
 	}
 

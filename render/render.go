@@ -6,15 +6,15 @@ import (
 	"math"
 	"strings"
 
-	"github.com/mlange-42/tom/api"
+	"github.com/mlange-42/tom/config"
 	"github.com/mlange-42/tom/data"
 )
 
 type Renderer struct {
-	data *api.MeteoResult
+	data *config.MeteoResult
 }
 
-func NewRenderer(data *api.MeteoResult) Renderer {
+func NewRenderer(data *config.MeteoResult) Renderer {
 	return Renderer{
 		data: data,
 	}
@@ -32,15 +32,15 @@ func (r *Renderer) DaySixHourly(index int) string {
 	_ = boxWidth
 
 	timeStart := r.data.SixHourlyTime
-	codes := r.data.GetSixHourly(api.HourlyWeatherCode)
-	temp := r.data.GetSixHourly(api.HourlyTemp)
-	appTemp := r.data.GetSixHourly(api.HourlyApparentTemp)
-	precip := r.data.GetSixHourly(api.HourlyPrecip)
-	precipProb := r.data.GetSixHourly(api.HourlyPrecipProb)
-	wind := r.data.GetSixHourly(api.HourlyWindSpeed)
-	windDir := r.data.GetSixHourly(api.HourlyWindDir)
-	clouds := r.data.GetSixHourly(api.HourlyCloudCover)
-	humidity := r.data.GetSixHourly(api.HourlyRH)
+	codes := r.data.GetSixHourly(config.HourlyWeatherCode)
+	temp := r.data.GetSixHourly(config.HourlyTemp)
+	appTemp := r.data.GetSixHourly(config.HourlyApparentTemp)
+	precip := r.data.GetSixHourly(config.HourlyPrecip)
+	precipProb := r.data.GetSixHourly(config.HourlyPrecipProb)
+	wind := r.data.GetSixHourly(config.HourlyWindSpeed)
+	windDir := r.data.GetSixHourly(config.HourlyWindDir)
+	clouds := r.data.GetSixHourly(config.HourlyCloudCover)
+	humidity := r.data.GetSixHourly(config.HourlyRH)
 
 	for i := 0; i < 4; i++ {
 		idx := index + i
@@ -58,10 +58,10 @@ func (r *Renderer) DaySixHourly(index int) string {
 		}
 
 		text := []string{
-			fmt.Sprintf("%-5s %s", timeStart[idx].Format(api.TimeLayout), codeProps.Name),
+			fmt.Sprintf("%-5s %s", timeStart[idx].Format(config.TimeLayout), codeProps.Name),
 			fmt.Sprintf("%2d (%2d) °C", int(math.Round(temp[idx])), int(math.Round(appTemp[idx]))),
 			fmt.Sprintf("%4.1fmm/%3d%%", precip[idx], int(math.Round(precipProb[idx]))),
-			fmt.Sprintf("%3dkm/h %-2s", int(math.Round(wind[idx])), api.Direction(windDir[idx])),
+			fmt.Sprintf("%3dkm/h %-2s", int(math.Round(wind[idx])), config.Direction(windDir[idx])),
 			fmt.Sprintf("%3d%%CC %3d%%RH", int(math.Round(clouds[idx])), int(math.Round(humidity[idx]))),
 		}
 		symWidth := len(codeProps.SymbolRunes[0])
@@ -89,7 +89,7 @@ func (r *Renderer) DaySixHourly(index int) string {
 }
 
 func (r *Renderer) DaySummary(index int) string {
-	code := int(r.data.GetDaily(api.DailyWeatherCode)[index])
+	code := int(r.data.GetDaily(config.DailyWeatherCode)[index])
 	codeProps, ok := data.WeatherCodes[code]
 	if !ok {
 		log.Fatalf("unknown weather code %d", code)
@@ -98,17 +98,17 @@ func (r *Renderer) DaySummary(index int) string {
 	return fmt.Sprintf(
 		"%-27s %2d-%2d°C  %4.1fmm/%3d%%  %3dkm/h %-2s",
 		codeProps.Name,
-		int(math.Round(r.data.GetDaily(api.DailyMinTemp)[index])),
-		int(math.Round(r.data.GetDaily(api.DailyMaxTemp)[index])),
-		r.data.GetDaily(api.DailyPrecip)[index],
-		int(math.Round(r.data.GetDaily(api.DailyPrecipProb)[index])),
-		int(r.data.GetDaily(api.DailyWindSpeed)[index]),
-		api.Direction(r.data.GetDaily(api.DailyWindDir)[index]),
+		int(math.Round(r.data.GetDaily(config.DailyMinTemp)[index])),
+		int(math.Round(r.data.GetDaily(config.DailyMaxTemp)[index])),
+		r.data.GetDaily(config.DailyPrecip)[index],
+		int(math.Round(r.data.GetDaily(config.DailyPrecipProb)[index])),
+		int(r.data.GetDaily(config.DailyWindSpeed)[index]),
+		config.Direction(r.data.GetDaily(config.DailyWindDir)[index]),
 	)
 }
 
 func (r *Renderer) Current() string {
-	code := int(r.data.GetCurrent(api.CurrentWeatherCode))
+	code := int(r.data.GetCurrent(config.CurrentWeatherCode))
 	codeProps, ok := data.WeatherCodes[code]
 	if !ok {
 		log.Fatalf("unknown weather code %d", code)
@@ -116,12 +116,12 @@ func (r *Renderer) Current() string {
 
 	return fmt.Sprintf(
 		"%s %3d°C  %4.1fmm  %3dkm/h %-2s  %3d%%CC  %3d%%RH",
-		codeProps.Name, int(math.Round(r.data.GetCurrent(api.CurrentTemp))),
-		r.data.GetCurrent(api.CurrentPrecip),
-		int(r.data.GetCurrent(api.CurrentWindSpeed)),
-		api.Direction(r.data.GetCurrent(api.CurrentWindDir)),
-		int(r.data.GetCurrent(api.CurrentCloudCover)),
-		int(r.data.GetCurrent(api.CurrentRH)),
+		codeProps.Name, int(math.Round(r.data.GetCurrent(config.CurrentTemp))),
+		r.data.GetCurrent(config.CurrentPrecip),
+		int(r.data.GetCurrent(config.CurrentWindSpeed)),
+		config.Direction(r.data.GetCurrent(config.CurrentWindDir)),
+		int(r.data.GetCurrent(config.CurrentCloudCover)),
+		int(r.data.GetCurrent(config.CurrentRH)),
 	)
 }
 

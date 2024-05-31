@@ -4,12 +4,17 @@ import (
 	"os"
 	"path"
 
-	"github.com/mlange-42/tom/api"
 	"github.com/mlange-42/tom/util"
 	"gopkg.in/yaml.v3"
 )
 
-func LoadLocations() (map[string]api.Location, error) {
+type Location struct {
+	Lat      float64
+	Lon      float64
+	TimeZone string
+}
+
+func LoadLocations() (map[string]Location, error) {
 	dir, err := GetRootDir()
 	if err != nil {
 		return nil, err
@@ -18,7 +23,7 @@ func LoadLocations() (map[string]api.Location, error) {
 	path := path.Join(dir, locationsFile)
 
 	if !util.FileExists(path) {
-		return map[string]api.Location{}, nil
+		return map[string]Location{}, nil
 	}
 
 	file, err := os.ReadFile(path)
@@ -26,7 +31,7 @@ func LoadLocations() (map[string]api.Location, error) {
 		return nil, err
 	}
 
-	locs := map[string]api.Location{}
+	locs := map[string]Location{}
 
 	if err := yaml.Unmarshal(file, &locs); err != nil {
 		return nil, err
@@ -35,7 +40,7 @@ func LoadLocations() (map[string]api.Location, error) {
 	return locs, nil
 }
 
-func SaveLocations(locations map[string]api.Location) error {
+func SaveLocations(locations map[string]Location) error {
 	dir, err := GetRootDir()
 	if err != nil {
 		return err

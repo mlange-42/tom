@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
+	"github.com/mlange-42/tom/config"
 )
 
 const DefaultUserAgent = "TOM-terminal-open-meteo"
@@ -17,7 +19,7 @@ const (
 )
 
 type Client interface {
-	Get(ctx context.Context, req Options) ([]byte, error)
+	Get(ctx context.Context, req config.Options) ([]byte, error)
 }
 
 type openMeteoClient struct {
@@ -34,7 +36,7 @@ func NewClient(api API) Client {
 	}
 }
 
-func (c *openMeteoClient) Get(ctx context.Context, opt Options) ([]byte, error) {
+func (c *openMeteoClient) Get(ctx context.Context, opt config.Options) ([]byte, error) {
 	url := opt.ToURL(c.URL)
 
 	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
@@ -60,4 +62,40 @@ func (c *openMeteoClient) Get(ctx context.Context, opt Options) ([]byte, error) 
 
 	//fmt.Println(body)
 	return body, nil
+}
+
+func GetLocation(location string) (config.Location, error) {
+	locations, err := config.LoadLocations()
+	if err != nil {
+		return config.Location{}, err
+	}
+	coords, err := getLocation(location, locations)
+	if err != nil {
+		return config.Location{}, err
+	}
+	locations[location] = coords
+	err = config.SaveLocations(locations)
+	if err != nil {
+		return config.Location{}, err
+	}
+	return coords, nil
+}
+
+func GetMeteo(loc config.Location) (*config.MeteoResult, error) {
+	client := NewClient(OpenMeteo)
+
+	opt := config.ForecastOptions{
+		Location:       loc,
+		Days:           7,
+		CurrentMetrics: config.DefaultCurrentMetrics,
+		HourlyMetrics:  config.DefaultHourlyMetrics,
+		DailyMetrics:   config.DefaultDailyMetrics,
+	}
+
+	result, err := client.Get(context.Background(), &opt)
+	if err != nil {
+		return nil, err
+	}
+
+	return config.ParseMeteo(result, &opt)
 }

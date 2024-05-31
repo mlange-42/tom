@@ -1,4 +1,4 @@
-package api
+package config
 
 import (
 	"fmt"
@@ -62,14 +62,14 @@ const (
 	DailyWindDir     DailyMetric = "wind_direction_10m_dominant"
 )
 
-var aggregators = map[HourlyMetric]agg.Aggregator{
+var Aggregators = map[HourlyMetric]agg.Aggregator{
 	HourlyWeatherCode:  &agg.ModeOrMax{},
 	HourlyTemp:         &agg.Point{},
 	HourlyApparentTemp: &agg.Point{},
 	HourlyRH:           &agg.Point{},
 	HourlyPrecipProb:   &agg.Max{},
 	HourlyPrecip:       &agg.Sum{},
-	HourlyCloudCover:   &agg.Avg{},
+	HourlyCloudCover:   &agg.Max{},
 	HourlyWindSpeed:    &agg.Max{},
 	HourlyWindGusts:    &agg.Max{},
 	HourlyWindDir:      &agg.Point{},
