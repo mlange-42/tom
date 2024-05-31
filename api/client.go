@@ -71,7 +71,7 @@ func GetLocation(location string) (config.Location, error) {
 
 	coords, ok := cached[location]
 	if !ok {
-		locations, err := GetLocations(location)
+		locations, err := GetLocations(location, 10)
 		if err != nil {
 			return config.Location{}, err
 		}
@@ -92,10 +92,11 @@ func GetLocation(location string) (config.Location, error) {
 	return coords, nil
 }
 
-func GetLocations(loc string) ([]config.GeoResultEntry, error) {
+func GetLocations(loc string, count int) ([]config.GeoResultEntry, error) {
 	client := NewClient(Geocoding)
 	opt := config.GeoOptions{
-		Name: loc,
+		Name:  loc,
+		Count: count,
 	}
 	result, err := client.Get(context.Background(), &opt)
 	if err != nil {
