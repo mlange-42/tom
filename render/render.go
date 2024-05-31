@@ -5,9 +5,11 @@ import (
 	"log"
 	"math"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/mlange-42/tom/config"
 	"github.com/mlange-42/tom/data"
+	"github.com/mlange-42/tom/util"
 )
 
 type Renderer struct {
@@ -21,6 +23,10 @@ func NewRenderer(data *config.MeteoResult) Renderer {
 }
 
 func (r *Renderer) DaySixHourly(index int) string {
+	yellow := data.ColorIDs['y']
+	red := data.ColorIDs['r']
+	blue := data.ColorIDs['b']
+
 	layout := make([][]rune, len(data.Layout))
 	colors := make([][]uint8, len(data.Layout))
 	for i, runes := range data.Layout {
@@ -31,8 +37,6 @@ func (r *Renderer) DaySixHourly(index int) string {
 	layoutWidth := len(layout[0])
 	boxWidth := (layoutWidth-1)/4 - 1
 	yOffset := 1
-
-	_ = boxWidth
 
 	timeStart := r.data.SixHourlyTime
 	codes := r.data.GetSixHourly(config.HourlyWeatherCode)
@@ -57,6 +61,7 @@ func (r *Renderer) DaySixHourly(index int) string {
 		x := 1 + (boxWidth+1)*i
 		for j, line := range codeProps.Symbol {
 			copy(layout[j+yOffset+1][x:x+len(line)], line)
+			copy(colors[j+yOffset+1][x:x+len(line)], codeProps.Colors[j])
 		}
 
 		text := []string{
@@ -66,6 +71,26 @@ func (r *Renderer) DaySixHourly(index int) string {
 			fmt.Sprintf("%3dkm/h %-2s", int(math.Round(wind[idx])), config.Direction(windDir[idx])),
 			fmt.Sprintf("%3d%%CC %3d%%RH", int(math.Round(clouds[idx])), int(math.Round(humidity[idx]))),
 		}
+		cols := make([][]uint8, len(text))
+
+		if temp[idx] <= 0 {
+			cols[1] = util.Repeat(blue, utf8.RuneCountInString(text[1]))
+		} else if temp[idx] > 30 {
+			cols[1] = util.Repeat(red, utf8.RuneCountInString(text[1]))
+		} else if temp[idx] > 20 {
+			cols[1] = util.Repeat(yellow, utf8.RuneCountInString(text[1]))
+		}
+
+		if precip[idx] >= 1 || precipProb[idx] > 50 {
+			cols[2] = util.Repeat(blue, utf8.RuneCountInString(text[2]))
+		}
+
+		if wind[idx] >= 62 {
+			cols[3] = util.Repeat(yellow, utf8.RuneCountInString(text[3]))
+		} else if wind[idx] >= 29 {
+			cols[3] = util.Repeat(red, utf8.RuneCountInString(text[3]))
+		}
+
 		symWidth := len(codeProps.Symbol[0])
 		x += 1
 		for j, line := range text {
@@ -75,6 +100,7 @@ func (r *Renderer) DaySixHourly(index int) string {
 			}
 			len := MinInt(maxLen, len(line))
 			copy(layout[j+yOffset][x:x+len], []rune(line[:len]))
+			copy(colors[j+yOffset][x:x+len], cols[j])
 
 			if j == 0 {
 				x += symWidth
@@ -83,11 +109,27 @@ func (r *Renderer) DaySixHourly(index int) string {
 	}
 
 	result := make([]string, len(layout))
+	builder := strings.Builder{}
+
+	var prevColor uint8
 	for i, runes := range layout {
-		result[i] = string(runes)
+		cols := colors[i]
+
+		for j, r := range runes {
+			c := cols[j]
+			if c != prevColor {
+				builder.WriteString(config.Colors[c].Tag)
+			}
+			builder.WriteRune(r)
+			prevColor = c
+		}
+
+		result[i] = builder.String()
+		builder.Reset()
 	}
 
-	return strings.Join(result, "\n")
+	resultStr := strings.Join(result, "\n")
+	return resultStr
 }
 
 func (r *Renderer) DaySummary(index int) string {

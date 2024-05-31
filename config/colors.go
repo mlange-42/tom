@@ -6,8 +6,10 @@ type TerminalColor struct {
 }
 
 var Colors = []TerminalColor{
-	{Rune: ' ', Tag: "white"},
-	{Rune: 'y', Tag: "yellow"},
-	{Rune: 'r', Tag: "red"},
-	{Rune: 'b', Tag: "blue"},
+	{Rune: ' ', Tag: "[-]"},
+	{Rune: 'y', Tag: "[yellow]"},
+	{Rune: 'r', Tag: "[red]"},
+	{Rune: 'b', Tag: "[blue]"},
+	{Rune: 'c', Tag: "[cyan]"},
+	{Rune: 'g', Tag: "[green]"},
 }

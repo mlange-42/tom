@@ -31,10 +31,12 @@ type weatherCode struct {
 	Color  string
 }
 
+var ColorIDs map[rune]uint8
+
 func init() {
-	colorIDs := map[rune]uint8{}
+	ColorIDs = map[rune]uint8{}
 	for i, c := range config.Colors {
-		colorIDs[c.Rune] = uint8(i)
+		ColorIDs[c.Rune] = uint8(i)
 	}
 
 	l := strings.Replace(layout, "\r\n", "\n", -1)
@@ -71,7 +73,7 @@ func init() {
 			runes = runes[1 : len(runes)-1]
 			ids := make([]uint8, len(runes))
 			for i, r := range runes {
-				id, ok := colorIDs[r]
+				id, ok := ColorIDs[r]
 				if !ok {
 					log.Fatalf("not a color for weather code symbols: '%s'", string(r))
 				}

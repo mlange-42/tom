@@ -65,6 +65,7 @@ func (a *App) Run() error {
 	}
 	forecast := tview.NewTextView().
 		SetWrap(false).
+		SetDynamicColors(true).
 		SetText(builder.String())
 	forecast.SetBorder(true)
 	forecast.SetTitle(" 7 days forecast ")

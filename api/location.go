@@ -22,13 +22,23 @@ func getLocation(loc string, locations map[string]config.Location) (config.Locat
 		if err != nil {
 			return config.Location{}, err
 		}
-		if len(parsed.Results) == 0 {
+
+		var selected *config.GeoResultEntry
+		for i := range parsed.Results {
+			e := &parsed.Results[i]
+			if e.TimeZone != "" {
+				selected = e
+				break
+			}
+		}
+
+		if selected == nil {
 			return config.Location{}, fmt.Errorf("location not found: '%s'", loc)
 		}
 		coords = config.Location{
-			Lat:      parsed.Results[0].Latitude,
-			Lon:      parsed.Results[0].Longitude,
-			TimeZone: parsed.Results[0].TimeZone,
+			Lat:      selected.Latitude,
+			Lon:      selected.Longitude,
+			TimeZone: selected.TimeZone,
 		}
 	}
 	return coords, nil
