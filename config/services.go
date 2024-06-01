@@ -27,10 +27,5 @@ var Services = []Service{
 		Description: "Meteo France",
 		UrlName:     "meteofrance",
 	},
-	{
-		Name:        "ECMWF",
-		Description: "ECMWF",
-		UrlName:     "esmwf",
-	},
 	// TODO: add the other available services
 }

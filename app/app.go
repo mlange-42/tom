@@ -53,7 +53,7 @@ func (a *App) Run() error {
 		SetDynamicColors(true).
 		SetText(
 			fmt.Sprintf("%s (%0.2f°N, %0.2f°E)  %s | %s",
-				a.cliArgs.Location, a.data.Location.Lat, a.data.Location.Lon,
+				strings.ToTitle(a.cliArgs.Location), a.data.Location.Lat, a.data.Location.Lon,
 				now.Format(config.TimeLayout),
 				renderer.Current(),
 			))

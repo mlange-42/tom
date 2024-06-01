@@ -22,6 +22,11 @@ func main() {
 func rootCommand() *cobra.Command {
 	cli := config.CliArgs{}
 
+	services := ""
+	for _, s := range config.Services {
+		services += fmt.Sprintf("    - %-5s - %s\n", s.Name, s.Description)
+	}
+
 	root := cobra.Command{
 		Use:           "tom",
 		Short:         "Terminal for Open-Meteo.",
@@ -44,6 +49,17 @@ func rootCommand() *cobra.Command {
 				return fmt.Errorf("parameter --days must be in range [1, 16]")
 			}
 
+			forecasterFound := false
+			for _, s := range config.Services {
+				if strings.EqualFold(s.Name, cli.Service.Name) {
+					cli.Service = s
+					forecasterFound = true
+				}
+			}
+			if !forecasterFound {
+				return fmt.Errorf("service '%s' not found. Available services:\n%s", cli.Service.Name, services)
+			}
+
 			cached, err := config.LoadLocations()
 			if err != nil {
 				return err
@@ -53,7 +69,9 @@ func rootCommand() *cobra.Command {
 			if ok && !forceApi {
 				cli.Coords = coords
 				a := app.New(cli)
-				a.Run()
+				if err := a.Run(); err != nil {
+					return err
+				}
 				return nil
 			}
 
@@ -66,6 +84,7 @@ func rootCommand() *cobra.Command {
 	}
 
 	root.Flags().IntVarP(&cli.Days, "days", "d", 7, "Number of forecast days in range [1, 16]")
+	root.Flags().StringVarP(&cli.Service.Name, "service", "s", "OM", "Forecast service.\n"+services)
 
 	root.Flags().SortFlags = false
 

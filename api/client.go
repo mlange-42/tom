@@ -120,6 +120,7 @@ func GetMeteo(args config.CliArgs) (*config.MeteoResult, error) {
 	client := NewClient(OpenMeteo)
 
 	opt := config.ForecastOptions{
+		Service:        args.Service.UrlName,
 		Location:       args.Coords,
 		Days:           args.Days,
 		CurrentMetrics: config.DefaultCurrentMetrics,

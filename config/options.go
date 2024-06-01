@@ -70,7 +70,7 @@ type Options interface {
 
 type ForecastOptions struct {
 	Location          Location
-	Forecaster        string          // Default "forecast"
+	Service           string          // Default "forecast"
 	TemperatureUnit   string          // Default "celsius"
 	WindSpeedUnit     string          // Default "kmh",
 	PrecipitationUnit string          // Default "mm"
@@ -82,11 +82,7 @@ type ForecastOptions struct {
 }
 
 func (o *ForecastOptions) ToURL(baseURL string) string {
-	forecaster := "forecast"
-	if o.Forecaster != "" {
-		forecaster = string(o.Forecaster)
-	}
-	url := fmt.Sprintf(`%s/%s?latitude=%f&longitude=%f`, baseURL, forecaster, o.Location.Lat, o.Location.Lon)
+	url := fmt.Sprintf(`%s/%s?latitude=%f&longitude=%f`, baseURL, o.Service, o.Location.Lat, o.Location.Lon)
 
 	if o.TemperatureUnit != "" {
 		url = fmt.Sprintf(`%s&temperature_unit=%s`, url, o.TemperatureUnit)
