@@ -52,6 +52,7 @@ func (a *App) Run() error {
 
 	current := tview.NewTextView().
 		SetWrap(false).
+		SetDynamicColors(true).
 		SetText(
 			fmt.Sprintf("%s (%0.2f°N, %0.2f°E)  %s | %s",
 				a.locName, a.data.Location.Lat, a.data.Location.Lon,
