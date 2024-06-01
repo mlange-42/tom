@@ -23,10 +23,6 @@ func NewRenderer(data *config.MeteoResult) Renderer {
 }
 
 func (r *Renderer) DaySixHourly(index int) string {
-	yellow := data.ColorIDs['y']
-	red := data.ColorIDs['r']
-	blue := data.ColorIDs['b']
-
 	layout := make([][]rune, len(data.Layout))
 	colors := make([][]uint8, len(data.Layout))
 	for i, runes := range data.Layout {
@@ -69,27 +65,14 @@ func (r *Renderer) DaySixHourly(index int) string {
 			fmt.Sprintf("%2d (%2d) °C", int(math.Round(temp[idx])), int(math.Round(appTemp[idx]))),
 			fmt.Sprintf("%4.1fmm/%3d%%", precip[idx], int(math.Round(precipProb[idx]))),
 			fmt.Sprintf("%3dkm/h %-2s", int(math.Round(wind[idx])), config.Direction(windDir[idx])),
-			fmt.Sprintf("%3d%%CC %3d%%RH", int(math.Round(clouds[idx])), int(math.Round(humidity[idx]))),
+			fmt.Sprintf("%3d%%C %3d%%H", int(math.Round(clouds[idx])), int(math.Round(humidity[idx]))),
 		}
 		cols := make([][]uint8, len(text))
 
-		if temp[idx] <= 0 {
-			cols[1] = util.Repeat(blue, utf8.RuneCountInString(text[1]))
-		} else if temp[idx] > 30 {
-			cols[1] = util.Repeat(red, utf8.RuneCountInString(text[1]))
-		} else if temp[idx] > 20 {
-			cols[1] = util.Repeat(yellow, utf8.RuneCountInString(text[1]))
-		}
-
-		if precip[idx] >= 1 || precipProb[idx] > 50 {
-			cols[2] = util.Repeat(blue, utf8.RuneCountInString(text[2]))
-		}
-
-		if wind[idx] >= 62 {
-			cols[3] = util.Repeat(yellow, utf8.RuneCountInString(text[3]))
-		} else if wind[idx] >= 29 {
-			cols[3] = util.Repeat(red, utf8.RuneCountInString(text[3]))
-		}
+		t, _, p, w := calcColors(temp[idx], 0, precip[idx], precipProb[idx], wind[idx])
+		cols[1] = util.Repeat(t, utf8.RuneCountInString(text[1]))
+		cols[2] = util.Repeat(p, utf8.RuneCountInString(text[2]))
+		cols[3] = util.Repeat(w, utf8.RuneCountInString(text[3]))
 
 		symWidth := len(codeProps.Symbol[0])
 		x += 1
@@ -139,16 +122,51 @@ func (r *Renderer) DaySummary(index int) string {
 		log.Fatalf("unknown weather code %d", code)
 	}
 
+	minTemp := r.data.GetDaily(config.DailyMinTemp)[index]
+	maxTemp := r.data.GetDaily(config.DailyMaxTemp)[index]
+	precip := r.data.GetDaily(config.DailyPrecip)[index]
+	precipProb := r.data.GetDaily(config.DailyPrecipProb)[index]
+	windSpeed := r.data.GetDaily(config.DailyWindSpeed)[index]
+
 	return fmt.Sprintf(
 		"%-27s %2d-%2d°C  %4.1fmm/%3d%%  %3dkm/h %-2s",
 		codeProps.Name,
-		int(math.Round(r.data.GetDaily(config.DailyMinTemp)[index])),
-		int(math.Round(r.data.GetDaily(config.DailyMaxTemp)[index])),
-		r.data.GetDaily(config.DailyPrecip)[index],
-		int(math.Round(r.data.GetDaily(config.DailyPrecipProb)[index])),
-		int(r.data.GetDaily(config.DailyWindSpeed)[index]),
+		int(math.Round(minTemp)),
+		int(math.Round(maxTemp)),
+		precip,
+		int(math.Round(precipProb)),
+		int(windSpeed),
 		config.Direction(r.data.GetDaily(config.DailyWindDir)[index]),
 	)
+}
+
+func calcColors(temp1, temp2, precip, precipProb, wind float64) (t1 uint8, t2 uint8, p uint8, w uint8) {
+	if temp1 <= 0 {
+		t1 = 3 // blue
+	} else if temp1 > 30 {
+		t1 = 2 // red
+	} else if temp1 > 20 {
+		t1 = 1 // yellow
+	}
+	if temp2 <= 0 {
+		t2 = 3 // blue
+	} else if temp2 > 30 {
+		t2 = 2 // red
+	} else if temp2 > 20 {
+		t2 = 1 // yellow
+	}
+
+	if precip >= 1 || precipProb > 50 {
+		p = 3 // blue
+	}
+
+	if wind >= 62 {
+		w = 1 // yellow
+	} else if wind >= 29 {
+		w = 2 // red
+	}
+
+	return
 }
 
 func (r *Renderer) Current() string {
