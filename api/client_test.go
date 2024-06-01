@@ -25,12 +25,14 @@ func TestGeoClient(t *testing.T) {
 
 	assert.Equal(t, 10, len(parsed.Results))
 
-	assert.Equal(t, "Germany", parsed.Results[0].CountryCode)
+	assert.Equal(t, "Germany", parsed.Results[0].Country)
+	assert.Equal(t, "DE", parsed.Results[0].CountryCode)
 	assert.Equal(t, "Land Berlin", parsed.Results[0].Admin1)
 	assert.Equal(t, "Europe/Berlin", parsed.Results[0].TimeZone)
 	assert.Greater(t, parsed.Results[0].Latitude, 0.0)
 	assert.Greater(t, parsed.Results[0].Longitude, 0.0)
 	assert.Greater(t, parsed.Results[0].Elevation, 0.0)
+	assert.Greater(t, parsed.Results[0].Population, 0)
 }
 
 func TestMeteoClient(t *testing.T) {
