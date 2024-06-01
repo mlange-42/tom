@@ -8,17 +8,6 @@ import (
 	"github.com/mlange-42/tom/util/agg"
 )
 
-type Forecaster string
-
-const (
-	Forecast    Forecaster = "forecast"
-	DWD         Forecaster = "dwd-icon"
-	NOAA_US     Forecaster = "gfs"
-	MeteoFrance Forecaster = "meteofrance"
-	ESMWF       Forecaster = "esmwf"
-	// TODO: add the other forecasters
-)
-
 type CurrentMetric string
 
 const (
@@ -81,7 +70,7 @@ type Options interface {
 
 type ForecastOptions struct {
 	Location          Location
-	Forecaster        Forecaster      // Default "forecast"
+	Forecaster        string          // Default "forecast"
 	TemperatureUnit   string          // Default "celsius"
 	WindSpeedUnit     string          // Default "kmh",
 	PrecipitationUnit string          // Default "mm"
