@@ -27,7 +27,7 @@ func New(cliArgs config.CliArgs) *App {
 
 func (a *App) Run() error {
 	var err error
-	a.data, err = api.GetMeteo(a.cliArgs.Coords)
+	a.data, err = api.GetMeteo(a.cliArgs)
 	if err != nil {
 		return err
 	}
