@@ -107,6 +107,7 @@ func (r *Renderer) DaySixHourly(index int) string {
 			prevColor = c
 		}
 
+		builder.WriteString(config.Colors[0].Tag)
 		result[i] = builder.String()
 		builder.Reset()
 	}
@@ -128,16 +129,57 @@ func (r *Renderer) DaySummary(index int) string {
 	precipProb := r.data.GetDaily(config.DailyPrecipProb)[index]
 	windSpeed := r.data.GetDaily(config.DailyWindSpeed)[index]
 
+	t1, t2, p, w := calcColors(minTemp, maxTemp, precip, precipProb, windSpeed)
+
 	return fmt.Sprintf(
-		"%-27s %2d-%2d°C  %4.1fmm/%3d%%  %3dkm/h %-2s",
+		"%-27s %s%2d[-]-%s%2d[-]°C  %s%4.1fmm/%3d%%  %s%3dkm/h %-2s[-]",
 		codeProps.Name,
+		config.Colors[t1].Tag,
 		int(math.Round(minTemp)),
+		config.Colors[t2].Tag,
 		int(math.Round(maxTemp)),
+		config.Colors[p].Tag,
 		precip,
 		int(math.Round(precipProb)),
+		config.Colors[w].Tag,
 		int(windSpeed),
 		config.Direction(r.data.GetDaily(config.DailyWindDir)[index]),
 	)
+}
+
+func (r *Renderer) Current() string {
+	code := int(r.data.GetCurrent(config.CurrentWeatherCode))
+	codeProps, ok := data.WeatherCodes[code]
+	if !ok {
+		log.Fatalf("unknown weather code %d", code)
+	}
+
+	temp := r.data.GetCurrent(config.CurrentTemp)
+	precip := r.data.GetCurrent(config.CurrentPrecip)
+	windSpeed := r.data.GetCurrent(config.CurrentWindSpeed)
+
+	t, _, p, w := calcColors(temp, 0, precip, 0, windSpeed)
+
+	return fmt.Sprintf(
+		"%s %s%3d°C  %s%4.1fmm/h  %s%3dkm/h %-2s[-]  %3d%%C  %3d%%H",
+		codeProps.Name,
+		config.Colors[t].Tag,
+		int(math.Round(temp)),
+		config.Colors[p].Tag,
+		precip,
+		config.Colors[w].Tag,
+		int(windSpeed),
+		config.Direction(r.data.GetCurrent(config.CurrentWindDir)),
+		int(r.data.GetCurrent(config.CurrentCloudCover)),
+		int(r.data.GetCurrent(config.CurrentRH)),
+	)
+}
+
+func MinInt(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }
 
 func calcColors(temp1, temp2, precip, precipProb, wind float64) (t1 uint8, t2 uint8, p uint8, w uint8) {
@@ -161,35 +203,10 @@ func calcColors(temp1, temp2, precip, precipProb, wind float64) (t1 uint8, t2 ui
 	}
 
 	if wind >= 62 {
-		w = 1 // yellow
-	} else if wind >= 29 {
 		w = 2 // red
+	} else if wind >= 29 {
+		w = 1 // yellow
 	}
 
 	return
-}
-
-func (r *Renderer) Current() string {
-	code := int(r.data.GetCurrent(config.CurrentWeatherCode))
-	codeProps, ok := data.WeatherCodes[code]
-	if !ok {
-		log.Fatalf("unknown weather code %d", code)
-	}
-
-	return fmt.Sprintf(
-		"%s %3d°C  %4.1fmm  %3dkm/h %-2s  %3d%%CC  %3d%%RH",
-		codeProps.Name, int(math.Round(r.data.GetCurrent(config.CurrentTemp))),
-		r.data.GetCurrent(config.CurrentPrecip),
-		int(r.data.GetCurrent(config.CurrentWindSpeed)),
-		config.Direction(r.data.GetCurrent(config.CurrentWindDir)),
-		int(r.data.GetCurrent(config.CurrentCloudCover)),
-		int(r.data.GetCurrent(config.CurrentRH)),
-	)
-}
-
-func MinInt(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
 }
