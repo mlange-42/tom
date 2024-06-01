@@ -28,7 +28,7 @@ func rootCommand() *cobra.Command {
 	}
 
 	root := cobra.Command{
-		Use:           "tom",
+		Use:           "tom LOCATION",
 		Short:         "Terminal for Open-Meteo.",
 		Long:          `Terminal for Open-Meteo.`,
 		SilenceUsage:  true,
@@ -39,7 +39,9 @@ func rootCommand() *cobra.Command {
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) == 0 {
-				return fmt.Errorf("please specify a location")
+				cmd.Help()
+				fmt.Println("\nPlease specify a location!")
+				return nil
 			}
 			cli.Location = strings.ToLower(strings.Join(args, " "))
 			forceApi := strings.HasSuffix(cli.Location, "?")
