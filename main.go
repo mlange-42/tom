@@ -20,6 +20,8 @@ func main() {
 
 // rootCommand sets up the CLI
 func rootCommand() *cobra.Command {
+	cli := config.CliArgs{}
+
 	root := cobra.Command{
 		Use:           "tom",
 		Short:         "Terminal for Open-Meteo.",
@@ -34,30 +36,36 @@ func rootCommand() *cobra.Command {
 			if len(args) == 0 {
 				return fmt.Errorf("please specify a location")
 			}
-			location := strings.ToLower(strings.Join(args, " "))
+			cli.Location = strings.ToLower(strings.Join(args, " "))
+			forceApi := strings.HasSuffix(cli.Location, "?")
+			cli.Location = strings.TrimSuffix(cli.Location, "?")
 
-			forceApi := strings.HasSuffix(location, "?")
-			location = strings.TrimSuffix(location, "?")
+			if cli.Days < 1 || cli.Days > 16 {
+				return fmt.Errorf("parameter --days must be in range [1, 16]")
+			}
 
 			cached, err := config.LoadLocations()
 			if err != nil {
 				return err
 			}
 
-			coords, ok := cached[location]
+			coords, ok := cached[cli.Location]
 			if ok && !forceApi {
-				a := app.New(strings.ToTitle(location), coords)
+				cli.Coords = coords
+				a := app.New(cli)
 				a.Run()
 				return nil
 			}
 
-			a := app.NewLocationDialog(location, cached)
+			a := app.NewLocationDialog(cli, cached)
 			if err := a.Run(); err != nil {
 				return err
 			}
 			return nil
 		},
 	}
+
+	root.Flags().IntVarP(&cli.Days, "days", "d", 7, "Number of forecast days in range [1, 16]")
 
 	root.Flags().SortFlags = false
 
