@@ -23,9 +23,9 @@ func NewRenderer(data *config.MeteoResult) Renderer {
 }
 
 func (r *Renderer) DaySixHourly(index int) string {
-	layout := make([][]rune, len(data.Layout))
-	colors := make([][]uint8, len(data.Layout))
-	for i, runes := range data.Layout {
+	layout := make([][]rune, len(data.DayLayout))
+	colors := make([][]uint8, len(data.DayLayout))
+	for i, runes := range data.DayLayout {
 		layout[i] = append(layout[i], runes...)
 		colors[i] = make([]uint8, len(runes))
 	}

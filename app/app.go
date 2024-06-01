@@ -45,7 +45,7 @@ func (a *App) Run() error {
 
 	grid := tview.NewGrid().
 		SetRows(3, 0, 1).
-		SetColumns(len(data.Layout[0]) + 2).
+		SetColumns(len(data.DayLayout[0]) + 2).
 		SetBorders(false)
 
 	renderer := render.NewRenderer(a.data)
