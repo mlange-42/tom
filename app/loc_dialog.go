@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"math"
-	"strings"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/mlange-42/tom/api"
@@ -13,32 +12,33 @@ import (
 )
 
 type LocationDialog struct {
-	location string
-	cached   map[string]config.Location
+	cliArgs config.CliArgs
+	cached  map[string]config.Location
 }
 
-func NewLocationDialog(location string, cached map[string]config.Location) *LocationDialog {
+func NewLocationDialog(cliArgs config.CliArgs, cached map[string]config.Location) *LocationDialog {
 	return &LocationDialog{
-		location: location,
-		cached:   cached,
+		cliArgs: cliArgs,
+		cached:  cached,
 	}
 }
 
 func (d *LocationDialog) Run() error {
-	locations, err := api.GetLocations(d.location, 100)
+	locations, err := api.GetLocations(d.cliArgs.Location, 100)
 	if err != nil {
 		return err
 	}
 
 	if len(locations) == 0 {
-		return fmt.Errorf("no locations found for '%s'", d.location)
+		return fmt.Errorf("no locations found for '%s'", d.cliArgs.Location)
 	}
 	if len(locations) == 1 {
 		coords, err := d.updateCache(&locations[0])
 		if err != nil {
 			log.Fatal(err)
 		}
-		a := New(strings.ToTitle(d.location), coords)
+		d.cliArgs.Coords = coords
+		a := New(d.cliArgs)
 		a.Run()
 		return nil
 	}
@@ -65,8 +65,9 @@ func (d *LocationDialog) Run() error {
 			if err != nil {
 				log.Fatal(err)
 			}
+			d.cliArgs.Coords = coords
 
-			a := New(strings.ToTitle(d.location), coords)
+			a := New(d.cliArgs)
 			a.Run()
 			return nil
 		}
@@ -86,7 +87,7 @@ func (d *LocationDialog) updateCache(loc *config.GeoResultEntry) (config.Locatio
 		TimeZone: loc.TimeZone,
 	}
 
-	d.cached[d.location] = coords
+	d.cached[d.cliArgs.Location] = coords
 	err := config.SaveLocations(d.cached)
 	if err != nil {
 		return coords, err

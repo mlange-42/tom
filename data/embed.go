@@ -12,10 +12,10 @@ import (
 //go:embed weather_codes.yml
 var weatherCodeBytes []byte
 
-//go:embed layout.txt
-var layout string
+//go:embed day_layout.txt
+var dayLayout string
 
-var Layout [][]rune
+var DayLayout [][]rune
 
 var WeatherCodes map[int]WeatherCode
 
@@ -39,12 +39,12 @@ func init() {
 		ColorIDs[c.Rune] = uint8(i)
 	}
 
-	l := strings.Replace(layout, "\r\n", "\n", -1)
+	l := strings.Replace(dayLayout, "\r\n", "\n", -1)
 	lines := strings.Split(l, "\n")
 
-	Layout = make([][]rune, len(lines))
+	DayLayout = make([][]rune, len(lines))
 	for i, line := range lines {
-		Layout[i] = []rune(line)
+		DayLayout[i] = []rune(line)
 	}
 
 	weatherCodes := map[int]weatherCode{}

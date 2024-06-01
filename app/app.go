@@ -14,22 +14,20 @@ import (
 )
 
 type App struct {
-	locName  string
-	location config.Location
+	cliArgs config.CliArgs
 
 	data *config.MeteoResult
 }
 
-func New(locName string, coords config.Location) *App {
+func New(cliArgs config.CliArgs) *App {
 	return &App{
-		locName:  locName,
-		location: coords,
+		cliArgs: cliArgs,
 	}
 }
 
 func (a *App) Run() error {
 	var err error
-	a.data, err = api.GetMeteo(a.location)
+	a.data, err = api.GetMeteo(a.cliArgs)
 	if err != nil {
 		return err
 	}
@@ -45,7 +43,7 @@ func (a *App) Run() error {
 
 	grid := tview.NewGrid().
 		SetRows(3, 0, 1).
-		SetColumns(len(data.Layout[0]) + 2).
+		SetColumns(len(data.DayLayout[0]) + 2).
 		SetBorders(false)
 
 	renderer := render.NewRenderer(a.data)
@@ -55,7 +53,7 @@ func (a *App) Run() error {
 		SetDynamicColors(true).
 		SetText(
 			fmt.Sprintf("%s (%0.2f°N, %0.2f°E)  %s | %s",
-				a.locName, a.data.Location.Lat, a.data.Location.Lon,
+				strings.ToTitle(a.cliArgs.Location), a.data.Location.Lat, a.data.Location.Lon,
 				now.Format(config.TimeLayout),
 				renderer.Current(),
 			))

@@ -116,12 +116,13 @@ func GetLocations(loc string, count int) ([]config.GeoResultEntry, error) {
 	return locations, nil
 }
 
-func GetMeteo(loc config.Location) (*config.MeteoResult, error) {
+func GetMeteo(args config.CliArgs) (*config.MeteoResult, error) {
 	client := NewClient(OpenMeteo)
 
 	opt := config.ForecastOptions{
-		Location:       loc,
-		Days:           7,
+		Service:        args.Service.UrlName,
+		Location:       args.Coords,
+		Days:           args.Days,
 		CurrentMetrics: config.DefaultCurrentMetrics,
 		HourlyMetrics:  config.DefaultHourlyMetrics,
 		DailyMetrics:   config.DefaultDailyMetrics,

@@ -39,6 +39,7 @@ func TestMeteoClient(t *testing.T) {
 	client := api.NewClient(api.OpenMeteo)
 
 	opt := config.ForecastOptions{
+		Service: "forecast",
 		Location: config.Location{
 			Lat:      52.5,
 			Lon:      13.4,
