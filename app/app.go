@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gdamore/tcell/v2"
+	"github.com/mlange-42/tom/api"
 	"github.com/mlange-42/tom/config"
 	"github.com/mlange-42/tom/data"
 	"github.com/mlange-42/tom/render"
@@ -13,18 +14,26 @@ import (
 )
 
 type App struct {
-	location string
-	data     *config.MeteoResult
+	locName  string
+	location config.Location
+
+	data *config.MeteoResult
 }
 
-func New(location string, data *config.MeteoResult) *App {
+func New(locName string, coords config.Location) *App {
 	return &App{
-		location: location,
-		data:     data,
+		locName:  locName,
+		location: coords,
 	}
 }
 
 func (a *App) Run() error {
+	var err error
+	a.data, err = api.GetMeteo(a.location)
+	if err != nil {
+		return err
+	}
+
 	var now time.Time
 	loc, err := time.LoadLocation(a.data.Location.TimeZone)
 	if err == nil {
@@ -45,7 +54,7 @@ func (a *App) Run() error {
 		SetWrap(false).
 		SetText(
 			fmt.Sprintf("%s (%0.2f°N, %0.2f°E)  %s | %s",
-				a.location, a.data.Location.Lat, a.data.Location.Lon,
+				a.locName, a.data.Location.Lat, a.data.Location.Lon,
 				now.Format(config.TimeLayout),
 				renderer.Current(),
 			))

@@ -14,13 +14,15 @@ type GeoResult struct {
 }
 
 type GeoResultEntry struct {
-	Name      string
-	Latitude  float64
-	Longitude float64
-	Country   string
-	Admin1    string
-	Elevation float64
-	TimeZone  string
+	Name        string
+	Latitude    float64
+	Longitude   float64
+	Country     string
+	CountryCode string `json:"country_code"`
+	Admin1      string
+	Elevation   float64
+	TimeZone    string
+	Population  int
 }
 
 type MeteoResult struct {

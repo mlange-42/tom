@@ -60,25 +60,60 @@ func (c *openMeteoClient) Get(ctx context.Context, opt config.Options) ([]byte, 
 		return nil, err
 	}
 
-	//fmt.Println(body)
 	return body, nil
 }
 
 func GetLocation(location string) (config.Location, error) {
-	locations, err := config.LoadLocations()
+	cached, err := config.LoadLocations()
 	if err != nil {
 		return config.Location{}, err
 	}
-	coords, err := getLocation(location, locations)
-	if err != nil {
-		return config.Location{}, err
+
+	coords, ok := cached[location]
+	if !ok {
+		locations, err := GetLocations(location, 10)
+		if err != nil {
+			return config.Location{}, err
+		}
+
+		coords = config.Location{
+			Lat:      locations[0].Latitude,
+			Lon:      locations[0].Longitude,
+			TimeZone: locations[0].TimeZone,
+		}
+
+		cached[location] = coords
+		err = config.SaveLocations(cached)
+		if err != nil {
+			return config.Location{}, err
+		}
 	}
-	locations[location] = coords
-	err = config.SaveLocations(locations)
-	if err != nil {
-		return config.Location{}, err
-	}
+
 	return coords, nil
+}
+
+func GetLocations(loc string, count int) ([]config.GeoResultEntry, error) {
+	client := NewClient(Geocoding)
+	opt := config.GeoOptions{
+		Name:  loc,
+		Count: count,
+	}
+	result, err := client.Get(context.Background(), &opt)
+	if err != nil {
+		return nil, err
+	}
+	parsed, err := config.ParseGeo(result)
+	if err != nil {
+		return nil, err
+	}
+
+	locations := []config.GeoResultEntry{}
+	for _, e := range parsed.Results {
+		if e.TimeZone != "" {
+			locations = append(locations, e)
+		}
+	}
+	return locations, nil
 }
 
 func GetMeteo(loc config.Location) (*config.MeteoResult, error) {
