@@ -30,6 +30,9 @@ func (d *LocationDialog) Run() error {
 		return err
 	}
 
+	if len(locations) == 0 {
+		return fmt.Errorf("no locations found for '%s'", d.location)
+	}
 	if len(locations) == 1 {
 		coords, err := d.updateCache(&locations[0])
 		if err != nil {

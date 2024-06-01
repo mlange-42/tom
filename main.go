@@ -31,5 +31,7 @@ func main() {
 	}
 
 	a := app.NewLocationDialog(location, cached)
-	a.Run()
+	if err := a.Run(); err != nil {
+		log.Fatal(err)
+	}
 }
