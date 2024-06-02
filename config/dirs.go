@@ -7,6 +7,7 @@ import (
 
 const appDirectory = ".tom"
 const locationsFile = "locations.yml"
+const configFile = "config.yml"
 
 func GetRootDir() (string, error) {
 	home, err := os.UserHomeDir()

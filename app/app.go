@@ -38,6 +38,12 @@ func (a *App) Run() error {
 		now = time.Now().In(loc)
 	}
 
+	if a.cliArgs.SetDefault {
+		if err := config.SaveCliArgs(&a.cliArgs); err != nil {
+			return err
+		}
+	}
+
 	app := tview.NewApplication()
 	pages := tview.NewPages()
 
