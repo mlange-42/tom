@@ -65,10 +65,13 @@ func (a *App) Run() error {
 				app.SetFocus(a.currentWeather)
 			}
 			return nil
-		} else if event.Rune() == '1' {
-			pages.SwitchToPage("forecast")
-		} else if event.Rune() == '2' {
-			pages.SwitchToPage("plots")
+		} else if event.Rune() == ' ' {
+			_, page := pages.GetFrontPage()
+			if page == forecasts {
+				pages.SwitchToPage("plots")
+			} else {
+				pages.SwitchToPage("forecast")
+			}
 		}
 		return event
 	})
@@ -139,7 +142,7 @@ func (a *App) createForecastsPage() tview.Primitive {
 
 	help := tview.NewTextView().
 		SetWrap(false).
-		SetText("Exit: Esc  Focus: Tab  Scroll: ←→↕  Pages: 1, 2, ...")
+		SetText("Exit: ESC  Pages: SPACE  Scroll: ←→↕  Focus: TAB")
 	grid.AddItem(help, 2, 0, 1, 1, 0, 0, false)
 
 	return grid
@@ -156,7 +159,7 @@ func (a *App) createPlotsPage() tview.Primitive {
 
 	help := tview.NewTextView().
 		SetWrap(false).
-		SetText("Exit: Esc  Focus: Tab  Scroll: ←→↕  Pages: 1, 2, ...")
+		SetText("Exit: ESC  Pages: SPACE  Scroll: ←→↕  Focus: TAB")
 	grid.AddItem(help, 2, 0, 1, 1, 0, 0, false)
 
 	return grid
