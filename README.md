@@ -25,6 +25,12 @@ Run `tom` with the name of a place:
 tom Buxtehude
 ```
 
+Set the default location, so you can later simply run `tom` without arguments:
+
+```
+tom Buxtehude --default
+```
+
 Get help:
 
 ```
