@@ -1,0 +1,58 @@
+package render
+
+import (
+	"fmt"
+	"math"
+
+	"github.com/mlange-42/tom/util"
+)
+
+type Chart struct {
+	canvas *Canvas
+}
+
+func NewChart(w, h int) *Chart {
+	return &Chart{
+		canvas: NewCanvas(w, h),
+	}
+}
+
+func (c *Chart) Draw(data []float64, bars bool) (min float64, max float64) {
+	min, max = util.MinMax(data)
+	_, height := c.canvas.Dims()
+	height -= 1
+
+	yZero := int(math.Round(float64(height) * (-min) / (max - min)))
+	yZero = util.Clamp(yZero, 0, height)
+
+	for x, v := range data {
+		y := int(math.Round(float64(height) * (v - min) / (max - min)))
+		fmt.Println(x, y, height-y)
+		c.canvas.Set(x, height-y, true)
+		if bars {
+			if v >= 0 {
+				for yy := yZero; yy < y; yy++ {
+					c.canvas.Set(x, height-yy, true)
+				}
+			} else {
+				for yy := yZero; yy > y; yy-- {
+					c.canvas.Set(x, height-yy, true)
+				}
+			}
+		} else {
+			if yZero != 0 {
+				c.canvas.Set(x, height-yZero, true)
+			}
+		}
+	}
+
+	return
+}
+
+func (c *Chart) Runes() [][]rune {
+	return c.canvas.Runes()
+}
+
+func (c *Chart) String() string {
+	return c.canvas.String()
+}
