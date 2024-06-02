@@ -17,6 +17,10 @@ type App struct {
 	cliArgs config.CliArgs
 
 	data *config.MeteoResult
+
+	currentWeather *tview.TextView
+	forecast       *tview.TextView
+	plots          *tview.TextView
 }
 
 func New(cliArgs config.CliArgs) *App {
@@ -32,12 +36,6 @@ func (a *App) Run() error {
 		return err
 	}
 
-	var now time.Time
-	loc, err := time.LoadLocation(a.data.Location.TimeZone)
-	if err == nil {
-		now = time.Now().In(loc)
-	}
-
 	if a.cliArgs.SetDefault {
 		if err := config.SaveCliArgs(&a.cliArgs); err != nil {
 			return err
@@ -47,14 +45,50 @@ func (a *App) Run() error {
 	app := tview.NewApplication()
 	pages := tview.NewPages()
 
-	grid := tview.NewGrid().
-		SetRows(3, 0, 1).
-		SetColumns(len(data.DayLayout[0]) + 2).
-		SetBorders(false)
+	if err = a.createWidgets(); err != nil {
+		return err
+	}
+	forecasts := a.createForecastsPage()
+	plots := a.createPlotsPage()
+
+	pages.AddAndSwitchToPage("forecast", forecasts, true)
+	pages.AddPage("plots", plots, true, false)
+
+	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		if event.Key() == tcell.KeyEsc {
+			app.Stop()
+			return nil
+		} else if event.Key() == tcell.KeyTab {
+			if a.currentWeather.HasFocus() {
+				app.SetFocus(a.forecast)
+			} else {
+				app.SetFocus(a.currentWeather)
+			}
+			return nil
+		} else if event.Rune() == '1' {
+			pages.SwitchToPage("forecast")
+		} else if event.Rune() == '2' {
+			pages.SwitchToPage("plots")
+		}
+		return event
+	})
+
+	if err := app.SetRoot(pages, true).Run(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (a *App) createWidgets() error {
+	var now time.Time
+	loc, err := time.LoadLocation(a.data.Location.TimeZone)
+	if err == nil {
+		now = time.Now().In(loc)
+	}
 
 	renderer := render.NewRenderer(a.data)
-
-	current := tview.NewTextView().
+	a.currentWeather = tview.NewTextView().
 		SetWrap(false).
 		SetDynamicColors(true).
 		SetText(
@@ -63,9 +97,8 @@ func (a *App) Run() error {
 				now.Format(config.TimeLayout),
 				renderer.Current(),
 			))
-	current.SetBorder(true)
-	current.SetTitle(" Current weather ")
-	grid.AddItem(current, 0, 0, 1, 1, 0, 0, false)
+	a.currentWeather.SetBorder(true)
+	a.currentWeather.SetTitle(" Current weather ")
 
 	builder := strings.Builder{}
 	for i, t := range a.data.DailyTime {
@@ -77,40 +110,54 @@ func (a *App) Run() error {
 			return err
 		}
 	}
-	forecast := tview.NewTextView().
+
+	a.forecast = tview.NewTextView().
 		SetWrap(false).
 		SetDynamicColors(true).
 		SetText(builder.String())
-	forecast.SetBorder(true)
-	forecast.SetTitle(fmt.Sprintf(" %s %d days forecast ", a.cliArgs.Service.Description, a.cliArgs.Days))
+	a.forecast.SetBorder(true)
+	a.forecast.SetTitle(fmt.Sprintf(" %s %d days forecast ", a.cliArgs.Service.Description, a.cliArgs.Days))
 
-	grid.AddItem(forecast, 1, 0, 1, 1, 0, 0, true)
+	a.plots = tview.NewTextView().
+		SetWrap(false).
+		SetDynamicColors(false).
+		SetText(renderer.Charts())
+	a.plots.SetBorder(true)
+	a.plots.SetTitle(fmt.Sprintf(" %s %d days charts ", a.cliArgs.Service.Description, a.cliArgs.Days))
+
+	return nil
+}
+
+func (a *App) createForecastsPage() tview.Primitive {
+	grid := tview.NewGrid().
+		SetRows(3, 0, 1).
+		SetColumns(len(data.DayLayout[0]) + 2).
+		SetBorders(false)
+
+	grid.AddItem(a.currentWeather, 0, 0, 1, 1, 0, 0, false)
+	grid.AddItem(a.forecast, 1, 0, 1, 1, 0, 0, true)
 
 	help := tview.NewTextView().
 		SetWrap(false).
-		SetText("Exit: Esc  Focus: Tab  Scroll: ←→↕")
+		SetText("Exit: Esc  Focus: Tab  Scroll: ←→↕  Pages: 1, 2, ...")
 	grid.AddItem(help, 2, 0, 1, 1, 0, 0, false)
 
-	pages.AddAndSwitchToPage("forecast", grid, true)
+	return grid
+}
 
-	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		if event.Key() == tcell.KeyEsc {
-			app.Stop()
-			return nil
-		} else if event.Key() == tcell.KeyTab {
-			if current.HasFocus() {
-				app.SetFocus(forecast)
-			} else {
-				app.SetFocus(current)
-			}
-			return nil
-		}
-		return event
-	})
+func (a *App) createPlotsPage() tview.Primitive {
+	grid := tview.NewGrid().
+		SetRows(3, 0, 1).
+		SetColumns(len(data.DayLayout[0]) + 2).
+		SetBorders(false)
 
-	if err := app.SetRoot(pages, true).Run(); err != nil {
-		panic(err)
-	}
+	grid.AddItem(a.currentWeather, 0, 0, 1, 1, 0, 0, false)
+	grid.AddItem(a.plots, 1, 0, 1, 1, 0, 0, true)
 
-	return nil
+	help := tview.NewTextView().
+		SetWrap(false).
+		SetText("Exit: Esc  Focus: Tab  Scroll: ←→↕  Pages: 1, 2, ...")
+	grid.AddItem(help, 2, 0, 1, 1, 0, 0, false)
+
+	return grid
 }

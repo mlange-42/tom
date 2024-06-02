@@ -175,6 +175,55 @@ func (r *Renderer) Current() string {
 	)
 }
 
+func (r *Renderer) Charts() string {
+	builder := strings.Builder{}
+	builder.WriteString("Temperature [°C]\n")
+	builder.WriteString(r.chart(config.HourlyTemp, false))
+	builder.WriteString("\nPrecipitation [mm/h]\n")
+	builder.WriteString(r.chart(config.HourlyPrecip, true))
+	builder.WriteString("\nPrecipitation probability [%]\n")
+	builder.WriteString(r.chart(config.HourlyPrecipProb, true))
+	builder.WriteString("\nWind speed [km/h]\n")
+	builder.WriteString(r.chart(config.HourlyWindSpeed, false))
+	builder.WriteString("\nCloud cover [%]\n")
+	builder.WriteString(r.chart(config.HourlyCloudCover, true))
+	builder.WriteString("\nRelative humidity [%]\n")
+	builder.WriteString(r.chart(config.HourlyRH, true))
+
+	return builder.String()
+}
+
+func (r *Renderer) chart(metric config.HourlyMetric, bars bool) string {
+	chart := NewChart(len(r.data.HourlyTime)/2, 6)
+	vMin, vMax := chart.Series(r.data.GetHourly(metric), bars)
+
+	for i := 0; i < len(r.data.HourlyTime); i += 24 {
+		chart.VLine(i, 4)
+	}
+
+	runes := chart.Runes()
+
+	builder := strings.Builder{}
+	builder.WriteString(fmt.Sprintf("%8.1f ", vMax))
+	builder.WriteString(fmt.Sprintf("%s\n", string(runes[0])))
+
+	for i := 1; i < len(runes)-1; i++ {
+		builder.WriteString(fmt.Sprintf("         %s\n", string(runes[i])))
+	}
+
+	builder.WriteString(fmt.Sprintf("%8.1f ", vMin))
+	builder.WriteString(fmt.Sprintf("%s\n", string(runes[len(runes)-1])))
+
+	builder.WriteString("         ")
+	for _, t := range r.data.DailyTime {
+		ts := t.Format(config.DateLayoutShort)
+		builder.WriteString(fmt.Sprintf("%11s ", ts))
+	}
+	builder.WriteRune('\n')
+
+	return builder.String()
+}
+
 func MinInt(a, b int) int {
 	if a < b {
 		return a
