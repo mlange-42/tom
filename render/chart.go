@@ -21,7 +21,10 @@ func (c *Chart) Series(data []float64, bars bool) (min float64, max float64) {
 	if min > 0 {
 		min = 0
 	}
-	_, height := c.canvas.Dims()
+	if max == min {
+		max = min + 1
+	}
+	_, height := c.canvas.PixelSize()
 	height -= 1
 
 	yZero := int(math.Round(float64(height) * (-min) / (max - min)))
@@ -50,9 +53,12 @@ func (c *Chart) Series(data []float64, bars bool) (min float64, max float64) {
 	return
 }
 
-func (c *Chart) VLine(x int) {
-	_, height := c.canvas.Dims()
-	for y := 0; y < height; y++ {
+func (c *Chart) VLine(x int, dash int) {
+	_, height := c.canvas.PixelSize()
+	if dash < 1 {
+		dash = 1
+	}
+	for y := 0; y < height; y += dash {
 		c.canvas.Set(x, y, true)
 	}
 }

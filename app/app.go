@@ -18,9 +18,9 @@ type App struct {
 
 	data *config.MeteoResult
 
-	currentWeather  *tview.TextView
-	forecast        *tview.TextView
-	temperaturePlot *tview.TextView
+	currentWeather *tview.TextView
+	forecast       *tview.TextView
+	plots          *tview.TextView
 }
 
 func New(cliArgs config.CliArgs) *App {
@@ -52,7 +52,7 @@ func (a *App) Run() error {
 	plots := a.createPlotsPage()
 
 	pages.AddAndSwitchToPage("forecast", forecasts, true)
-	pages.AddPage("plots", plots, true, true)
+	pages.AddPage("plots", plots, true, false)
 
 	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if event.Key() == tcell.KeyEsc {
@@ -118,12 +118,12 @@ func (a *App) createWidgets() error {
 	a.forecast.SetBorder(true)
 	a.forecast.SetTitle(fmt.Sprintf(" %s %d days forecast ", a.cliArgs.Service.Description, a.cliArgs.Days))
 
-	a.temperaturePlot = tview.NewTextView().
+	a.plots = tview.NewTextView().
 		SetWrap(false).
-		SetDynamicColors(true).
+		SetDynamicColors(false).
 		SetText(renderer.Charts())
-	a.temperaturePlot.SetBorder(true)
-	a.temperaturePlot.SetTitle(" Charts ")
+	a.plots.SetBorder(true)
+	a.plots.SetTitle(fmt.Sprintf(" %s %d days charts ", a.cliArgs.Service.Description, a.cliArgs.Days))
 
 	return nil
 }
@@ -139,7 +139,7 @@ func (a *App) createForecastsPage() tview.Primitive {
 
 	help := tview.NewTextView().
 		SetWrap(false).
-		SetText("Exit: Esc  Focus: Tab  Scroll: ←→↕")
+		SetText("Exit: Esc  Focus: Tab  Scroll: ←→↕  Pages: 1, 2, ...")
 	grid.AddItem(help, 2, 0, 1, 1, 0, 0, false)
 
 	return grid
@@ -152,11 +152,11 @@ func (a *App) createPlotsPage() tview.Primitive {
 		SetBorders(false)
 
 	grid.AddItem(a.currentWeather, 0, 0, 1, 1, 0, 0, false)
-	grid.AddItem(a.temperaturePlot, 1, 0, 1, 1, 0, 0, true)
+	grid.AddItem(a.plots, 1, 0, 1, 1, 0, 0, true)
 
 	help := tview.NewTextView().
 		SetWrap(false).
-		SetText("Exit: Esc  Focus: Tab  Scroll: ←→↕")
+		SetText("Exit: Esc  Focus: Tab  Scroll: ←→↕  Pages: 1, 2, ...")
 	grid.AddItem(help, 2, 0, 1, 1, 0, 0, false)
 
 	return grid

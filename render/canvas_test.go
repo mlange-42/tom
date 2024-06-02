@@ -10,7 +10,7 @@ import (
 func TestCanvas(t *testing.T) {
 	c := render.NewCanvas(10, 4)
 
-	sx, sy := c.Dims()
+	sx, sy := c.PixelSize()
 
 	assert.Equal(t, 20, sx)
 	assert.Equal(t, 16, sy)

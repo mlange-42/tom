@@ -1,6 +1,8 @@
 package render
 
-import "strings"
+import (
+	"strings"
+)
 
 const brailleWidth = 2
 const brailleHeight = 4
@@ -38,7 +40,11 @@ func NewCanvas(w, h int) *Canvas {
 	}
 }
 
-func (c *Canvas) Dims() (int, int) {
+func (c *Canvas) Size() (int, int) {
+	return c.width, c.height
+}
+
+func (c *Canvas) PixelSize() (int, int) {
 	return c.width * brailleWidth, c.height * brailleHeight
 }
 
