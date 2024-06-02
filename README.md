@@ -5,7 +5,8 @@ Based on data from [Open-Meteo](https://open-meteo.com/).
 
 Very early work in progress!
 
-![Tom screenshot](https://github.com/mlange-42/tom/assets/44003176/077f681f-7b73-4913-8a20-c9bfd7d3e786)
+![screenshot forecast](https://github.com/mlange-42/tom/assets/44003176/f20d793a-2d68-412a-b3f6-fb6a166f488c)
+![screenshot plots](https://github.com/mlange-42/tom/assets/44003176/043acfa8-60c7-4d77-8deb-f78cb8adef18)
 
 ## Installation
 
