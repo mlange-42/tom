@@ -7,17 +7,26 @@ Very early work in progress!
 
 ![Tom screenshot](https://github.com/mlange-42/tom/assets/44003176/077f681f-7b73-4913-8a20-c9bfd7d3e786)
 
-## Installation & Usage
+## Installation
 
-As long as there are no precompiled binaries, [Go](https://go.dev) is required.
-Install the latest development version of Tom like this:
+Pre-compiled binaries for Linux, Windows and MacOS are available in the
+[Releases](https://github.com/mlange-42/tom/releases).
 
-```shell
-go install github.com/mlange-42/tom@main
-```
+> Alternatively, install the latest development version of Tom using [Go](https://go.dev):
+> ```shell
+> go install github.com/mlange-42/tom@main
+> ```
 
-Then, run `tom` with the name of a place:
+## Usage
+
+Run `tom` with the name of a place:
 
 ```
 tom Buxtehude
+```
+
+Get help:
+
+```
+tom -h
 ```
