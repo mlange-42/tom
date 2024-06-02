@@ -47,9 +47,11 @@ func (a *App) Run() error {
 	if err = a.createWidgets(); err != nil {
 		return err
 	}
-	grid := a.createForecastsPage()
+	forecasts := a.createForecastsPage()
+	plots := a.createPlotsPage()
 
-	pages.AddAndSwitchToPage("forecast", grid, true)
+	pages.AddAndSwitchToPage("forecast", forecasts, true)
+	pages.AddPage("plots", plots, true, true)
 
 	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if event.Key() == tcell.KeyEsc {
@@ -62,6 +64,10 @@ func (a *App) Run() error {
 				app.SetFocus(a.currentWeather)
 			}
 			return nil
+		} else if event.Rune() == '1' {
+			pages.SwitchToPage("forecast")
+		} else if event.Rune() == '2' {
+			pages.SwitchToPage("plots")
 		}
 		return event
 	})
@@ -122,6 +128,23 @@ func (a *App) createForecastsPage() tview.Primitive {
 
 	grid.AddItem(a.currentWeather, 0, 0, 1, 1, 0, 0, false)
 	grid.AddItem(a.forecast, 1, 0, 1, 1, 0, 0, true)
+
+	help := tview.NewTextView().
+		SetWrap(false).
+		SetText("Exit: Esc  Focus: Tab  Scroll: ←→↕")
+	grid.AddItem(help, 2, 0, 1, 1, 0, 0, false)
+
+	return grid
+}
+
+func (a *App) createPlotsPage() tview.Primitive {
+	grid := tview.NewGrid().
+		SetRows(3, 0, 1).
+		SetColumns(len(data.DayLayout[0]) + 2).
+		SetBorders(false)
+
+	grid.AddItem(a.currentWeather, 0, 0, 1, 1, 0, 0, false)
+	//grid.AddItem(a.forecast, 1, 0, 1, 1, 0, 0, true)
 
 	help := tview.NewTextView().
 		SetWrap(false).
