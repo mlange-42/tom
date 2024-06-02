@@ -18,8 +18,9 @@ type App struct {
 
 	data *config.MeteoResult
 
-	currentWeather *tview.TextView
-	forecast       *tview.TextView
+	currentWeather  *tview.TextView
+	forecast        *tview.TextView
+	temperaturePlot *tview.TextView
 }
 
 func New(cliArgs config.CliArgs) *App {
@@ -117,6 +118,27 @@ func (a *App) createWidgets() error {
 	a.forecast.SetBorder(true)
 	a.forecast.SetTitle(fmt.Sprintf(" %s %d days forecast ", a.cliArgs.Service.Description, a.cliArgs.Days))
 
+	tempChart := render.NewChart(len(a.data.HourlyTime)/2, 6)
+	tempChart.Series(a.data.GetHourly(config.HourlyTemp), false)
+
+	precipChart := render.NewChart(len(a.data.HourlyTime)/2, 6)
+	precipChart.Series(a.data.GetHourly(config.HourlyPrecip), true)
+
+	for i := 0; i < len(a.data.HourlyTime); i += 24 {
+		tempChart.VLine(i)
+		precipChart.VLine(i)
+	}
+
+	a.temperaturePlot = tview.NewTextView().
+		SetWrap(false).
+		SetDynamicColors(true).
+		SetText(
+			tempChart.String() + "\n\n" +
+				precipChart.String(),
+		)
+	a.temperaturePlot.SetBorder(true)
+	a.temperaturePlot.SetTitle(" Charts ")
+
 	return nil
 }
 
@@ -144,7 +166,7 @@ func (a *App) createPlotsPage() tview.Primitive {
 		SetBorders(false)
 
 	grid.AddItem(a.currentWeather, 0, 0, 1, 1, 0, 0, false)
-	//grid.AddItem(a.forecast, 1, 0, 1, 1, 0, 0, true)
+	grid.AddItem(a.temperaturePlot, 1, 0, 1, 1, 0, 0, true)
 
 	help := tview.NewTextView().
 		SetWrap(false).

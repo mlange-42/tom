@@ -1,7 +1,6 @@
 package render
 
 import (
-	"fmt"
 	"math"
 
 	"github.com/mlange-42/tom/util"
@@ -17,8 +16,11 @@ func NewChart(w, h int) *Chart {
 	}
 }
 
-func (c *Chart) Draw(data []float64, bars bool) (min float64, max float64) {
+func (c *Chart) Series(data []float64, bars bool) (min float64, max float64) {
 	min, max = util.MinMax(data)
+	if min > 0 {
+		min = 0
+	}
 	_, height := c.canvas.Dims()
 	height -= 1
 
@@ -27,7 +29,6 @@ func (c *Chart) Draw(data []float64, bars bool) (min float64, max float64) {
 
 	for x, v := range data {
 		y := int(math.Round(float64(height) * (v - min) / (max - min)))
-		fmt.Println(x, y, height-y)
 		c.canvas.Set(x, height-y, true)
 		if bars {
 			if v >= 0 {
@@ -40,13 +41,20 @@ func (c *Chart) Draw(data []float64, bars bool) (min float64, max float64) {
 				}
 			}
 		} else {
-			if yZero != 0 {
-				c.canvas.Set(x, height-yZero, true)
-			}
+			//if yZero != 0 {
+			c.canvas.Set(x, height-yZero, true)
+			//}
 		}
 	}
 
 	return
+}
+
+func (c *Chart) VLine(x int) {
+	_, height := c.canvas.Dims()
+	for y := 0; y < height; y++ {
+		c.canvas.Set(x, y, true)
+	}
 }
 
 func (c *Chart) Runes() [][]rune {

@@ -12,7 +12,7 @@ func TestChart(t *testing.T) {
 
 	data := []float64{0, 1, 2, 6, 12, 8, 4, 1, -2, -4}
 
-	c.Draw(data, true)
+	c.Series(data, true)
 
 	assert.Equal(t,
 		`⠀⠀⡇⠀⠀
