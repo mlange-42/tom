@@ -76,7 +76,7 @@ func (a *App) Run() error {
 		SetDynamicColors(true).
 		SetText(builder.String())
 	forecast.SetBorder(true)
-	forecast.SetTitle(" 7 days forecast ")
+	forecast.SetTitle(fmt.Sprintf(" %s %d days forecast ", a.cliArgs.Service.Description, a.cliArgs.Days))
 
 	grid.AddItem(forecast, 1, 0, 1, 1, 0, 0, true)
 
