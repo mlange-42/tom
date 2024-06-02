@@ -175,6 +175,22 @@ func (r *Renderer) Current() string {
 	)
 }
 
+func (r *Renderer) Charts() string {
+	tempChart := NewChart(len(r.data.HourlyTime)/2, 6)
+	tempChart.Series(r.data.GetHourly(config.HourlyTemp), false)
+
+	precipChart := NewChart(len(r.data.HourlyTime)/2, 6)
+	precipChart.Series(r.data.GetHourly(config.HourlyPrecip), true)
+
+	for i := 0; i < len(r.data.HourlyTime); i += 24 {
+		tempChart.VLine(i)
+		precipChart.VLine(i)
+	}
+
+	return tempChart.String() + "\n\n" +
+		precipChart.String()
+}
+
 func MinInt(a, b int) int {
 	if a < b {
 		return a

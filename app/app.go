@@ -118,24 +118,10 @@ func (a *App) createWidgets() error {
 	a.forecast.SetBorder(true)
 	a.forecast.SetTitle(fmt.Sprintf(" %s %d days forecast ", a.cliArgs.Service.Description, a.cliArgs.Days))
 
-	tempChart := render.NewChart(len(a.data.HourlyTime)/2, 6)
-	tempChart.Series(a.data.GetHourly(config.HourlyTemp), false)
-
-	precipChart := render.NewChart(len(a.data.HourlyTime)/2, 6)
-	precipChart.Series(a.data.GetHourly(config.HourlyPrecip), true)
-
-	for i := 0; i < len(a.data.HourlyTime); i += 24 {
-		tempChart.VLine(i)
-		precipChart.VLine(i)
-	}
-
 	a.temperaturePlot = tview.NewTextView().
 		SetWrap(false).
 		SetDynamicColors(true).
-		SetText(
-			tempChart.String() + "\n\n" +
-				precipChart.String(),
-		)
+		SetText(renderer.Charts())
 	a.temperaturePlot.SetBorder(true)
 	a.temperaturePlot.SetTitle(" Charts ")
 
