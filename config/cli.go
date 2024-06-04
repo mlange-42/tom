@@ -13,6 +13,7 @@ type CliArgs struct {
 	Coords     Location `yaml:"-"`
 	SetDefault bool     `yaml:"-"`
 	Days       int
+	PastDays   int
 	Service    Service
 }
 

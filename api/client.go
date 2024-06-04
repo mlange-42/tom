@@ -123,6 +123,7 @@ func GetMeteo(args config.CliArgs) (*config.MeteoResult, error) {
 		Service:        args.Service.UrlName,
 		Location:       args.Coords,
 		Days:           args.Days,
+		PastDays:       args.PastDays,
 		CurrentMetrics: config.DefaultCurrentMetrics,
 		HourlyMetrics:  config.DefaultHourlyMetrics,
 		DailyMetrics:   config.DefaultDailyMetrics,

@@ -1,3 +1,9 @@
+## [[unpublished]](https://github.com/mlange-42/tom/compare/v0.2.0...main)
+
+### Other
+
+- Improve location selection dialog layout, add help (31)
+
 ## [[v0.2.0]](https://github.com/mlange-42/tom/compare/v0.1.0...v0.2.0)
 
 ### Features
