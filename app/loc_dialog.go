@@ -8,7 +8,6 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/mlange-42/tom/api"
 	"github.com/mlange-42/tom/config"
-	"github.com/mlange-42/tom/data"
 	"github.com/rivo/tview"
 )
 
@@ -48,7 +47,7 @@ func (d *LocationDialog) Run() error {
 
 	grid := tview.NewGrid().
 		SetRows(3, 0, 1).
-		SetColumns(len(data.DayLayout[0]) + 2).
+		SetColumns(-1).
 		SetBorders(false)
 
 	header := tview.NewTextView().
@@ -161,8 +160,12 @@ func (t *LocationTable) GetCell(row, column int) *tview.TableCell {
 			text = fmt.Sprintf("%d", pop)
 		}
 	}
+	cell := tview.NewTableCell(text)
+	if column == 0 {
+		cell.SetExpansion(1)
+	}
 
-	return tview.NewTableCell(text)
+	return cell
 }
 
 func (t *LocationTable) GetRowCount() int {
