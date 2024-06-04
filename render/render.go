@@ -5,6 +5,7 @@ import (
 	"log"
 	"math"
 	"strings"
+	"time"
 	"unicode/utf8"
 
 	"github.com/mlange-42/tom/config"
@@ -175,25 +176,25 @@ func (r *Renderer) Current() string {
 	)
 }
 
-func (r *Renderer) Charts() string {
+func (r *Renderer) Charts(now time.Time) string {
 	builder := strings.Builder{}
 	builder.WriteString("Temperature [°C]\n")
-	builder.WriteString(r.chart(config.HourlyTemp, false))
+	builder.WriteString(r.chart(config.HourlyTemp, false, now))
 	builder.WriteString("\nPrecipitation [mm/h]\n")
-	builder.WriteString(r.chart(config.HourlyPrecip, true))
+	builder.WriteString(r.chart(config.HourlyPrecip, true, now))
 	builder.WriteString("\nPrecipitation probability [%]\n")
-	builder.WriteString(r.chart(config.HourlyPrecipProb, true))
+	builder.WriteString(r.chart(config.HourlyPrecipProb, true, now))
 	builder.WriteString("\nWind speed [km/h]\n")
-	builder.WriteString(r.chart(config.HourlyWindSpeed, false))
+	builder.WriteString(r.chart(config.HourlyWindSpeed, false, now))
 	builder.WriteString("\nCloud cover [%]\n")
-	builder.WriteString(r.chart(config.HourlyCloudCover, true))
+	builder.WriteString(r.chart(config.HourlyCloudCover, true, now))
 	builder.WriteString("\nRelative humidity [%]\n")
-	builder.WriteString(r.chart(config.HourlyRH, true))
+	builder.WriteString(r.chart(config.HourlyRH, true, now))
 
 	return builder.String()
 }
 
-func (r *Renderer) chart(metric config.HourlyMetric, bars bool) string {
+func (r *Renderer) chart(metric config.HourlyMetric, bars bool, now time.Time) string {
 	chart := NewChart(len(r.data.HourlyTime)/2, 6)
 	vMin, vMax := chart.Series(r.data.GetHourly(metric), bars)
 
@@ -217,7 +218,11 @@ func (r *Renderer) chart(metric config.HourlyMetric, bars bool) string {
 	builder.WriteString("         ")
 	for _, t := range r.data.DailyTime {
 		ts := t.Format(config.DateLayoutShort)
-		builder.WriteString(fmt.Sprintf("%11s ", ts))
+		if now.YearDay() == t.YearDay() {
+			builder.WriteString(fmt.Sprintf("[yellow]%11s[-] ", ts))
+		} else {
+			builder.WriteString(fmt.Sprintf("%11s ", ts))
+		}
 	}
 	builder.WriteRune('\n')
 

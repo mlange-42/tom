@@ -60,7 +60,12 @@ func (a *App) Run() error {
 			return nil
 		} else if event.Key() == tcell.KeyTab {
 			if a.currentWeather.HasFocus() {
-				app.SetFocus(a.forecast)
+				_, page := pages.GetFrontPage()
+				if page == forecasts {
+					app.SetFocus(a.forecast)
+				} else {
+					app.SetFocus(a.plots)
+				}
 			} else {
 				app.SetFocus(a.currentWeather)
 			}
@@ -105,9 +110,13 @@ func (a *App) createWidgets() error {
 
 	builder := strings.Builder{}
 	for i, t := range a.data.DailyTime {
+		tag := "[-]"
+		if t.YearDay() == now.YearDay() {
+			tag = "[yellow]"
+		}
 		_, err := builder.WriteString(
-			fmt.Sprintf("%-11s | %s\n%s\n",
-				t.Format(config.DateLayoutShort), renderer.DaySummary(i), renderer.DaySixHourly(i*4)),
+			fmt.Sprintf("%s%-11s[-] | %s\n%s\n",
+				tag, t.Format(config.DateLayoutShort), renderer.DaySummary(i), renderer.DaySixHourly(i*4)),
 		)
 		if err != nil {
 			return err
@@ -123,8 +132,8 @@ func (a *App) createWidgets() error {
 
 	a.plots = tview.NewTextView().
 		SetWrap(false).
-		SetDynamicColors(false).
-		SetText(renderer.Charts())
+		SetDynamicColors(true).
+		SetText(renderer.Charts(now))
 	a.plots.SetBorder(true)
 	a.plots.SetTitle(fmt.Sprintf(" %s %d days charts ", a.cliArgs.Service.Description, a.cliArgs.Days))
 

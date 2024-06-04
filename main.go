@@ -71,6 +71,9 @@ func rootCommand() (*cobra.Command, error) {
 			if _, ok := flagUsed["days"]; ok {
 				defaults.Days = cli.Days
 			}
+			if _, ok := flagUsed["past"]; ok {
+				defaults.PastDays = cli.PastDays
+			}
 			if _, ok := flagUsed["service"]; ok {
 				defaults.Service = cli.Service
 			}
@@ -115,6 +118,7 @@ func rootCommand() (*cobra.Command, error) {
 	}
 
 	root.Flags().IntVarP(&cli.Days, "days", "d", 7, "Number of forecast days in range [1, 16]")
+	root.Flags().IntVarP(&cli.PastDays, "past", "p", 0, "Number of past days to include [1, 16]")
 	root.Flags().StringVarP(&cli.Service.Name, "service", "s", "OM", "Forecast service.\n"+services)
 	root.Flags().BoolVarP(&cli.SetDefault, "default", "", false, "Set current location and settings as default")
 
