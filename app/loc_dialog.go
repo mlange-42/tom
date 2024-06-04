@@ -44,22 +44,46 @@ func (d *LocationDialog) Run() error {
 	}
 
 	app := tview.NewApplication()
-	data := &LocationTable{Locations: locations}
+
+	grid := tview.NewGrid().
+		SetRows(3, 0, 1).
+		SetColumns(-1).
+		SetBorders(false)
+
+	header := tview.NewTextView().
+		SetWrap(false).
+		SetText("Please select a location")
+	header.SetBorder(true)
+
+	grid.AddItem(header, 0, 0, 1, 1, 0, 0, false)
+
+	data := NewLocationTable(locations)
 	table := tview.NewTable().
 		SetBorders(false).
 		SetSelectable(true, false).
-		SetContent(data).
+		SetContent(&data).
 		SetEvaluateAllRows(true).
 		SetSeparator(tview.Borders.Vertical)
+	table.SetBorder(true)
+
+	grid.AddItem(table, 1, 0, 1, 1, 0, 0, true)
+
+	help := tview.NewTextView().
+		SetWrap(false).
+		SetText("Exit: ESC  Scroll: ←→↕  Select: ENTER")
+	grid.AddItem(help, 2, 0, 1, 1, 0, 0, false)
 
 	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if event.Key() == tcell.KeyEsc {
 			app.Stop()
 			return nil
 		} else if event.Key() == tcell.KeyEnter {
-			app.Stop()
 			row, _ := table.GetSelection()
-			loc := locations[row]
+			if row == 0 {
+				return nil
+			}
+			app.Stop()
+			loc := locations[row-1]
 
 			coords, err := d.updateCache(&loc)
 			if err != nil {
@@ -74,7 +98,7 @@ func (d *LocationDialog) Run() error {
 		return event
 	})
 
-	if err := app.SetRoot(table, true).Run(); err != nil {
+	if err := app.SetRoot(grid, true).Run(); err != nil {
 		panic(err)
 	}
 	return nil
@@ -98,19 +122,27 @@ func (d *LocationDialog) updateCache(loc *config.GeoResultEntry) (config.Locatio
 type LocationTable struct {
 	tview.TableContentReadOnly
 
-	Locations []config.GeoResultEntry
+	locations []config.GeoResultEntry
+	header    []string
+}
+
+func NewLocationTable(locations []config.GeoResultEntry) LocationTable {
+	return LocationTable{
+		locations: locations,
+		header:    []string{"Name", "Region", "State", "Coordinates", "Population"},
+	}
 }
 
 func (t *LocationTable) GetCell(row, column int) *tview.TableCell {
+	if row == 0 {
+		return tview.NewTableCell(t.header[column])
+	}
 	var text string
-	loc := &t.Locations[row]
+	loc := &t.locations[row-1]
 
 	switch column {
 	case 0:
 		runes := []rune(loc.Name)
-		if len(runes) > 25 {
-			runes = runes[:25]
-		}
 		text = string(runes)
 	case 1:
 		text = loc.Admin1
@@ -128,12 +160,16 @@ func (t *LocationTable) GetCell(row, column int) *tview.TableCell {
 			text = fmt.Sprintf("%d", pop)
 		}
 	}
+	cell := tview.NewTableCell(text)
+	if column == 0 {
+		cell.SetExpansion(1)
+	}
 
-	return tview.NewTableCell(text)
+	return cell
 }
 
 func (t *LocationTable) GetRowCount() int {
-	return len(t.Locations)
+	return len(t.locations) + 1
 }
 
 func (t *LocationTable) GetColumnCount() int {
