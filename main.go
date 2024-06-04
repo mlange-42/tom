@@ -118,9 +118,9 @@ func rootCommand() (*cobra.Command, error) {
 	}
 
 	root.Flags().IntVarP(&cli.Days, "days", "d", 7, "Number of forecast days in range [1, 16]")
-	root.Flags().IntVarP(&cli.PastDays, "past", "p", 0, "Number of past days to include [1, 16]")
-	root.Flags().StringVarP(&cli.Service.Name, "service", "s", "OM", "Forecast service.\n"+services)
-	root.Flags().BoolVarP(&cli.SetDefault, "default", "", false, "Set current location and settings as default")
+	root.Flags().IntVarP(&cli.PastDays, "past-days", "p", 0, "Number of past days to include")
+	root.Flags().StringVarP(&cli.Service.Name, "service", "s", "OM", "Forecast service:\n"+services)
+	root.Flags().BoolVarP(&cli.SetDefault, "default", "", false, "Save given location and settings as default")
 
 	root.Flags().SortFlags = false
 

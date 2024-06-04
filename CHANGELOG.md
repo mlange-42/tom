@@ -2,7 +2,7 @@
 
 ### Features
 
-- Expose past days to show as CLI parameter (#32)
+- Expose past days to show as CLI parameter (#32, #33)
 - Highlight the current day in forecast and plots (#32)
 
 ### Other
