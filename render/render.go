@@ -42,6 +42,7 @@ func (r *Renderer) DaySixHourly(index int) string {
 	precip := r.data.GetSixHourly(config.HourlyPrecip)
 	precipProb := r.data.GetSixHourly(config.HourlyPrecipProb)
 	wind := r.data.GetSixHourly(config.HourlyWindSpeed)
+	windGusts := r.data.GetSixHourly(config.HourlyWindGusts)
 	windDir := r.data.GetSixHourly(config.HourlyWindDir)
 	clouds := r.data.GetSixHourly(config.HourlyCloudCover)
 	humidity := r.data.GetSixHourly(config.HourlyRH)
@@ -64,16 +65,18 @@ func (r *Renderer) DaySixHourly(index int) string {
 		text := []string{
 			fmt.Sprintf("%-5s %s", timeStart[idx].Format(config.TimeLayout), codeProps.Name),
 			fmt.Sprintf("%2d (%2d) °C", int(math.Round(temp[idx])), int(math.Round(appTemp[idx]))),
-			fmt.Sprintf("%4.1fmm/%3d%%", precip[idx], int(math.Round(precipProb[idx]))),
+			fmt.Sprintf("%4.1fmm %3d%%", precip[idx], int(math.Round(precipProb[idx]))),
 			fmt.Sprintf("%3dkm/h %-2s", int(math.Round(wind[idx])), config.Direction(windDir[idx])),
+			fmt.Sprintf("%3dkm/h", int(math.Round(windGusts[idx]))),
 			fmt.Sprintf("%3d%%C %3d%%H", int(math.Round(clouds[idx])), int(math.Round(humidity[idx]))),
 		}
 		cols := make([][]uint8, len(text))
 
-		t, _, p, w := calcColors(temp[idx], 0, precip[idx], precipProb[idx], wind[idx])
+		t, _, p, w, g := calcColors(temp[idx], 0, precip[idx], precipProb[idx], wind[idx], windGusts[idx])
 		cols[1] = util.Repeat(t, utf8.RuneCountInString(text[1]))
 		cols[2] = util.Repeat(p, utf8.RuneCountInString(text[2]))
 		cols[3] = util.Repeat(w, utf8.RuneCountInString(text[3]))
+		cols[4] = util.Repeat(g, utf8.RuneCountInString(text[4]))
 
 		symWidth := len(codeProps.Symbol[0])
 		x += 1
@@ -129,11 +132,12 @@ func (r *Renderer) DaySummary(index int) string {
 	precip := r.data.GetDaily(config.DailyPrecip)[index]
 	precipProb := r.data.GetDaily(config.DailyPrecipProb)[index]
 	windSpeed := r.data.GetDaily(config.DailyWindSpeed)[index]
+	windGusts := r.data.GetDaily(config.DailyWindGusts)[index]
 
-	t1, t2, p, w := calcColors(minTemp, maxTemp, precip, precipProb, windSpeed)
+	t1, t2, p, w, g := calcColors(minTemp, maxTemp, precip, precipProb, windSpeed, windGusts)
 
 	return fmt.Sprintf(
-		"%-27s %s%2d[-]-%s%2d[-]°C  %s%4.1fmm/%3d%%  %s%3dkm/h %-2s[-]",
+		"%-27s %s%2d[-]-%s%2d[-]°C  %s%4.1fmm/%3d%%  %s%2dkm/h[-] %-2s (%s%2dkm/h[-])",
 		codeProps.Name,
 		config.Colors[t1].Tag,
 		int(math.Round(minTemp)),
@@ -145,10 +149,12 @@ func (r *Renderer) DaySummary(index int) string {
 		config.Colors[w].Tag,
 		int(windSpeed),
 		config.Direction(r.data.GetDaily(config.DailyWindDir)[index]),
+		config.Colors[g].Tag,
+		int(windGusts),
 	)
 }
 
-func (r *Renderer) Current() string {
+func (r *Renderer) Current(offset int) string {
 	code := int(r.data.GetCurrent(config.CurrentWeatherCode))
 	codeProps, ok := data.WeatherCodes[code]
 	if !ok {
@@ -158,12 +164,14 @@ func (r *Renderer) Current() string {
 	temp := r.data.GetCurrent(config.CurrentTemp)
 	precip := r.data.GetCurrent(config.CurrentPrecip)
 	windSpeed := r.data.GetCurrent(config.CurrentWindSpeed)
+	windGusts := r.data.GetCurrent(config.CurrentWindGusts)
 
-	t, _, p, w := calcColors(temp, 0, precip, 0, windSpeed)
-
+	t, _, p, w, g := calcColors(temp, 0, precip, 0, windSpeed, windGusts)
+	spacer := strings.Repeat(" ", offset)
 	return fmt.Sprintf(
-		"%s %s%3d°C  %s%4.1fmm/h  %s%3dkm/h %-2s[-]  %3d%%C  %3d%%H",
+		"%s\n%s%s%2d°C  %s%4.1fmm/h  %s%2d[-]km/h %-2s (%s%dkm/h[-])  %3d%%C  %3d%%H",
 		codeProps.Name,
+		spacer,
 		config.Colors[t].Tag,
 		int(math.Round(temp)),
 		config.Colors[p].Tag,
@@ -171,6 +179,8 @@ func (r *Renderer) Current() string {
 		config.Colors[w].Tag,
 		int(windSpeed),
 		config.Direction(r.data.GetCurrent(config.CurrentWindDir)),
+		config.Colors[g].Tag,
+		int(windGusts),
 		int(r.data.GetCurrent(config.CurrentCloudCover)),
 		int(r.data.GetCurrent(config.CurrentRH)),
 	)
@@ -245,7 +255,7 @@ func MinInt(a, b int) int {
 	return b
 }
 
-func calcColors(temp1, temp2, precip, precipProb, wind float64) (t1 uint8, t2 uint8, p uint8, w uint8) {
+func calcColors(temp1, temp2, precip, precipProb, wind, gusts float64) (t1 uint8, t2 uint8, p uint8, w uint8, g uint8) {
 	if temp1 <= 0 {
 		t1 = 3 // blue
 	} else if temp1 > 30 {
@@ -269,6 +279,12 @@ func calcColors(temp1, temp2, precip, precipProb, wind float64) (t1 uint8, t2 ui
 		w = 2 // red
 	} else if wind >= 29 {
 		w = 1 // yellow
+	}
+
+	if gusts >= 62 {
+		g = 2 // red
+	} else if gusts >= 29 {
+		g = 1 // yellow
 	}
 
 	return
