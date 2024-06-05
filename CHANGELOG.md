@@ -3,6 +3,7 @@
 ### Features
 
 - Mark current time in plots with yellow color (#37)
+- Include wind gusts in forecast and plots (#38)
 
 ### Bugfixes
 
