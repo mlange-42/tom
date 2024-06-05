@@ -71,7 +71,7 @@ func rootCommand() (*cobra.Command, error) {
 			if _, ok := flagUsed["days"]; ok {
 				defaults.Days = cli.Days
 			}
-			if _, ok := flagUsed["past"]; ok {
+			if _, ok := flagUsed["past-days"]; ok {
 				defaults.PastDays = cli.PastDays
 			}
 			if _, ok := flagUsed["service"]; ok {
