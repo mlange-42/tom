@@ -199,7 +199,7 @@ func (r *Renderer) chart(metric config.HourlyMetric, bars bool, now time.Time) s
 	vMin, vMax := chart.Series(r.data.GetHourly(metric), bars)
 
 	for i := 0; i < len(r.data.HourlyTime); i += 24 {
-		chart.VLine(i, 4)
+		chart.VLine(i, 4, bars)
 	}
 
 	runes := chart.Runes()

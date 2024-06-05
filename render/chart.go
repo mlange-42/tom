@@ -53,13 +53,19 @@ func (c *Chart) Series(data []float64, bars bool) (min float64, max float64) {
 	return
 }
 
-func (c *Chart) VLine(x int, dash int) {
+func (c *Chart) VLine(x int, dash int, invert bool) {
 	_, height := c.canvas.PixelSize()
 	if dash < 1 {
 		dash = 1
 	}
-	for y := 0; y < height; y += dash {
-		c.canvas.Set(x, y, true)
+	if invert {
+		for y := 0; y < height; y += dash {
+			c.canvas.Set(x, y, !c.canvas.Get(x, y))
+		}
+	} else {
+		for y := 0; y < height; y += dash {
+			c.canvas.Set(x, y, true)
+		}
 	}
 }
 

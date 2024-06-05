@@ -60,6 +60,14 @@ func (c *Canvas) Set(x, y int, v bool) {
 	}
 }
 
+func (c *Canvas) Get(x, y int) bool {
+	col, xx := x/brailleWidth, x%brailleWidth
+	row, yy := y/brailleHeight, y%brailleHeight
+
+	b := &c.grid[row][col]
+	return b[xx][yy] > 0
+}
+
 func (c *Canvas) Runes() [][]rune {
 	runes := make([][]rune, c.height)
 
