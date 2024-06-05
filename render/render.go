@@ -179,15 +179,15 @@ func (r *Renderer) Current() string {
 func (r *Renderer) Charts(now time.Time) string {
 	builder := strings.Builder{}
 	builder.WriteString("Temperature [°C]\n")
-	builder.WriteString(r.chart(config.HourlyTemp, false, now))
+	builder.WriteString(r.chart(config.HourlyTemp, false, now) + "\n")
 	builder.WriteString("\nPrecipitation [mm/h]\n")
-	builder.WriteString(r.chart(config.HourlyPrecip, true, now))
+	builder.WriteString(r.chart(config.HourlyPrecip, true, now) + "\n")
 	builder.WriteString("\nPrecipitation probability [%]\n")
-	builder.WriteString(r.chart(config.HourlyPrecipProb, true, now))
+	builder.WriteString(r.chart(config.HourlyPrecipProb, true, now) + "\n")
 	builder.WriteString("\nWind speed [km/h]\n")
-	builder.WriteString(r.chart(config.HourlyWindSpeed, false, now))
+	builder.WriteString(r.chart(config.HourlyWindSpeed, false, now) + "\n")
 	builder.WriteString("\nCloud cover [%]\n")
-	builder.WriteString(r.chart(config.HourlyCloudCover, true, now))
+	builder.WriteString(r.chart(config.HourlyCloudCover, true, now) + "\n")
 	builder.WriteString("\nRelative humidity [%]\n")
 	builder.WriteString(r.chart(config.HourlyRH, true, now))
 
@@ -224,7 +224,6 @@ func (r *Renderer) chart(metric config.HourlyMetric, bars bool, now time.Time) s
 			builder.WriteString(fmt.Sprintf("%11s ", ts))
 		}
 	}
-	builder.WriteRune('\n')
 
 	return builder.String()
 }
