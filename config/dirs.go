@@ -2,20 +2,10 @@ package config
 
 import (
 	"os"
-	"path/filepath"
 )
 
-const appDirectory = ".tom"
-const locationsFile = "locations.yml"
-const configFile = "config.yml"
-
-func GetRootDir() (string, error) {
-	home, err := os.UserHomeDir()
-	if err != nil {
-		return "", err
-	}
-	return filepath.Join(home, appDirectory), nil
-}
+const locationsFile = "tom/locations.yml"
+const configFile = "tom/config.yml"
 
 func CreateDir(path string) error {
 	_, err := os.Stat(path)
