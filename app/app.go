@@ -115,7 +115,7 @@ func (a *App) createWidgets() error {
 			newline = "\n"
 		}
 		_, err := builder.WriteString(
-			fmt.Sprintf("%s%-11s[-] | %s\n%s%s",
+			fmt.Sprintf("%s%-10s[-]  %s\n%s%s",
 				tag, t.Format(config.DateLayoutShort), renderer.DaySummary(i), renderer.DaySixHourly(i*4), newline),
 		)
 		if err != nil {
@@ -142,7 +142,7 @@ func (a *App) createWidgets() error {
 
 func (a *App) createForecastsPage() tview.Primitive {
 	grid := tview.NewGrid().
-		SetRows(4, 0, 1).
+		SetRows(3, 0, 1).
 		SetColumns(len(data.DayLayout[0]) + 2).
 		SetBorders(false)
 
@@ -159,7 +159,7 @@ func (a *App) createForecastsPage() tview.Primitive {
 
 func (a *App) createPlotsPage() tview.Primitive {
 	grid := tview.NewGrid().
-		SetRows(4, 0, 1).
+		SetRows(3, 0, 1).
 		SetColumns(len(data.DayLayout[0]) + 2).
 		SetBorders(false)
 

@@ -137,7 +137,7 @@ func (r *Renderer) DaySummary(index int) string {
 	t1, t2, p, w, g := calcColors(minTemp, maxTemp, precip, precipProb, windSpeed, windGusts)
 
 	return fmt.Sprintf(
-		"%-27s %s%2d[-]-%s%2d[-]°C  %s%4.1fmm/%3d%%  %s%2dkm/h[-] %-2s (%s%2dkm/h[-])",
+		"%-25s %s%2d[-]-%s%2d[-]°C  %s%4.1fmm/%3d%%  %s%2dkm/h[-] %-2s (%s%2dkm/h[-])",
 		codeProps.Name,
 		config.Colors[t1].Tag,
 		int(math.Round(minTemp)),
@@ -167,11 +167,9 @@ func (r *Renderer) Current(offset int) string {
 	windGusts := r.data.GetCurrent(config.CurrentWindGusts)
 
 	t, _, p, w, g := calcColors(temp, 0, precip, 0, windSpeed, windGusts)
-	spacer := strings.Repeat(" ", offset)
 	return fmt.Sprintf(
-		"%s\n%s%s%2d°C  %s%4.1fmm/h  %s%2d[-]km/h %-2s (%s%dkm/h[-])  %3d%%C  %3d%%H",
+		"%s  %s%2d°C  %s%4.1fmm/h  %s%2d[-]km/h %-2s (%s%dkm/h[-])  %3d%%C  %3d%%H",
 		codeProps.Name,
-		spacer,
 		config.Colors[t].Tag,
 		int(math.Round(temp)),
 		config.Colors[p].Tag,
@@ -196,6 +194,8 @@ func (r *Renderer) Charts(now time.Time) string {
 	builder.WriteString(r.chart(config.HourlyPrecipProb, true, now) + "\n")
 	builder.WriteString("\nWind speed [km/h]\n")
 	builder.WriteString(r.chart(config.HourlyWindSpeed, false, now) + "\n")
+	builder.WriteString("\nWind gusts [km/h]\n")
+	builder.WriteString(r.chart(config.HourlyWindGusts, false, now) + "\n")
 	builder.WriteString("\nCloud cover [%]\n")
 	builder.WriteString(r.chart(config.HourlyCloudCover, true, now) + "\n")
 	builder.WriteString("\nRelative humidity [%]\n")
