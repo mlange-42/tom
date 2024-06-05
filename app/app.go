@@ -114,9 +114,13 @@ func (a *App) createWidgets() error {
 		if t.YearDay() == now.YearDay() {
 			tag = "[yellow]"
 		}
+		newline := ""
+		if i < len(a.data.DailyTime)-1 {
+			newline = "\n"
+		}
 		_, err := builder.WriteString(
-			fmt.Sprintf("%s%-11s[-] | %s\n%s\n",
-				tag, t.Format(config.DateLayoutShort), renderer.DaySummary(i), renderer.DaySixHourly(i*4)),
+			fmt.Sprintf("%s%-11s[-] | %s\n%s%s",
+				tag, t.Format(config.DateLayoutShort), renderer.DaySummary(i), renderer.DaySixHourly(i*4), newline),
 		)
 		if err != nil {
 			return err
