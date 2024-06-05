@@ -19,6 +19,7 @@ const (
 	CurrentCloudCover   CurrentMetric = "cloud_cover"
 	CurrentWindSpeed    CurrentMetric = "wind_speed_10m"
 	CurrentWindDir      CurrentMetric = "wind_direction_10m"
+	CurrentWindGusts    CurrentMetric = "wind_gusts_10m"
 )
 
 type HourlyMetric string

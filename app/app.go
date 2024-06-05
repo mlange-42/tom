@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/mlange-42/tom/api"
@@ -95,10 +96,10 @@ func (a *App) createWidgets() error {
 		SetWrap(false).
 		SetDynamicColors(true).
 		SetText(
-			fmt.Sprintf("%s (%0.2f°N, %0.2f°E)  %s | %s",
+			fmt.Sprintf("%s (%0.2f°N, %0.2f°E)  %s  %s",
 				strings.ToTitle(a.cliArgs.Location), a.data.Location.Lat, a.data.Location.Lon,
 				now.Format(config.TimeLayout),
-				renderer.Current(),
+				renderer.Current(utf8.RuneCountInString(a.cliArgs.Location)+2),
 			))
 	a.currentWeather.SetBorder(true)
 	a.currentWeather.SetTitle(" Current weather ")
@@ -114,7 +115,7 @@ func (a *App) createWidgets() error {
 			newline = "\n"
 		}
 		_, err := builder.WriteString(
-			fmt.Sprintf("%s%-11s[-] | %s\n%s%s",
+			fmt.Sprintf("%s%-10s[-]  %s\n%s%s",
 				tag, t.Format(config.DateLayoutShort), renderer.DaySummary(i), renderer.DaySixHourly(i*4), newline),
 		)
 		if err != nil {

@@ -27,7 +27,7 @@ package api
 	85: "slight snow showers",
 	86: "heavy snow showers",
 	95: "slight thunderstorm",
-	96: "slight thunderstorm w/ hail",
+	96: "slight thunderst/ w/ hail",
 	97: "heavy thunderstorm",
-	99: "heavy thunderstorm w/ hail",
+	99: "heavy thunderst/ w/ hail",
 }*/

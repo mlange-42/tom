@@ -8,6 +8,7 @@ var DefaultCurrentMetrics = []CurrentMetric{
 	CurrentCloudCover,
 	CurrentWindSpeed,
 	CurrentWindDir,
+	CurrentWindGusts,
 	CurrentRH,
 }
 
@@ -21,6 +22,7 @@ var DefaultHourlyMetrics = []HourlyMetric{
 	HourlyCloudCover,
 	HourlyWindSpeed,
 	HourlyWindDir,
+	HourlyWindGusts,
 }
 
 var DefaultDailyMetrics = []DailyMetric{
@@ -32,4 +34,5 @@ var DefaultDailyMetrics = []DailyMetric{
 	DailySunshine,
 	DailyWindSpeed,
 	DailyWindDir,
+	DailyWindGusts,
 }
