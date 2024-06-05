@@ -1,8 +1,12 @@
 ## [[unpublished]](https://github.com/mlange-42/tom/compare/v0.3.0...main)
 
+### Features
+
+- Mark current time in plots with yellow color (#37)
+
 ### Bugfixes
 
-* Remove superfluous newlines at end of forecast and plot panels (#36)
+- Remove superfluous newlines at end of forecast and plot panels (#36)
 
 ## [[v0.3.0]](https://github.com/mlange-42/tom/compare/v0.2.0...v0.3.0)
 

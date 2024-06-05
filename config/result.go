@@ -27,6 +27,7 @@ type GeoResultEntry struct {
 
 type MeteoResult struct {
 	Location Location
+	TimeZone *time.Location
 
 	GenerationTime_ms float64
 	Current           CurrentWeather
@@ -98,9 +99,13 @@ func ParseMeteo(data []byte, opt *ForecastOptions) (*MeteoResult, error) {
 		return nil, err
 	}
 
-	var err error
+	timeZone, err := time.LoadLocation(m.TimeZone)
+	if err != nil {
+		return nil, err
+	}
+
 	current := CurrentWeather{Values: map[string]float64{}}
-	current.Time, err = time.Parse(DateTimeLayout, m.Current["time"].(string))
+	current.Time, err = time.ParseInLocation(DateTimeLayout, m.Current["time"].(string), timeZone)
 	if err != nil {
 		return nil, err
 	}
@@ -116,12 +121,12 @@ func ParseMeteo(data []byte, opt *ForecastOptions) (*MeteoResult, error) {
 		current.Values[string(key)] = f
 	}
 
-	hourlyTime, hourly, err := parseHourly(&m, opt.HourlyMetrics)
+	hourlyTime, hourly, err := parseHourly(&m, opt.HourlyMetrics, timeZone)
 	if err != nil {
 		return nil, err
 	}
 
-	dailyTime, daily, err := parseDaily(&m, opt.DailyMetrics)
+	dailyTime, daily, err := parseDaily(&m, opt.DailyMetrics, timeZone)
 	if err != nil {
 		return nil, err
 	}
@@ -144,6 +149,7 @@ func ParseMeteo(data []byte, opt *ForecastOptions) (*MeteoResult, error) {
 			Lon:      m.Longitude,
 			TimeZone: m.TimeZone,
 		},
+		TimeZone:          timeZone,
 		GenerationTime_ms: m.GenerationTime_ms,
 		Current:           current,
 		Hourly:            hourly,
@@ -157,7 +163,7 @@ func ParseMeteo(data []byte, opt *ForecastOptions) (*MeteoResult, error) {
 	}, nil
 }
 
-func parseHourly(m *meteoResultJs, metrics []HourlyMetric) ([]time.Time, map[string][]float64, error) {
+func parseHourly(m *meteoResultJs, metrics []HourlyMetric, timeZone *time.Location) ([]time.Time, map[string][]float64, error) {
 	hourly := map[string][]float64{}
 	rawTime, ok := m.Hourly["time"]
 	if !ok {
@@ -170,7 +176,7 @@ func parseHourly(m *meteoResultJs, metrics []HourlyMetric) ([]time.Time, map[str
 	}
 	hourlyTime := make([]time.Time, len(timeStr))
 	for i, v := range timeStr {
-		hourlyTime[i], err = time.Parse(DateTimeLayout, v)
+		hourlyTime[i], err = time.ParseInLocation(DateTimeLayout, v, timeZone)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -191,7 +197,7 @@ func parseHourly(m *meteoResultJs, metrics []HourlyMetric) ([]time.Time, map[str
 	return hourlyTime, hourly, nil
 }
 
-func parseDaily(m *meteoResultJs, metrics []DailyMetric) ([]time.Time, map[string][]float64, error) {
+func parseDaily(m *meteoResultJs, metrics []DailyMetric, timeZone *time.Location) ([]time.Time, map[string][]float64, error) {
 	daily := map[string][]float64{}
 	rawTime, ok := m.Daily["time"]
 	if !ok {
@@ -204,7 +210,7 @@ func parseDaily(m *meteoResultJs, metrics []DailyMetric) ([]time.Time, map[strin
 	}
 	dailyTime := make([]time.Time, len(timeStr))
 	for i, v := range timeStr {
-		dailyTime[i], err = time.Parse(DateLayout, v)
+		dailyTime[i], err = time.ParseInLocation(DateLayout, v, timeZone)
 		if err != nil {
 			return nil, nil, err
 		}

@@ -89,11 +89,7 @@ func (a *App) Run() error {
 }
 
 func (a *App) createWidgets() error {
-	var now time.Time
-	loc, err := time.LoadLocation(a.data.Location.TimeZone)
-	if err == nil {
-		now = time.Now().In(loc)
-	}
+	now := time.Now().In(a.data.TimeZone)
 
 	renderer := render.NewRenderer(a.data)
 	a.currentWeather = tview.NewTextView().
