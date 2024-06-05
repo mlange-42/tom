@@ -205,15 +205,25 @@ func (r *Renderer) chart(metric config.HourlyMetric, bars bool, now time.Time) s
 	runes := chart.Runes()
 
 	builder := strings.Builder{}
-	builder.WriteString(fmt.Sprintf("%8.1f ", vMax))
-	builder.WriteString(fmt.Sprintf("%s\n", string(runes[0])))
-
-	for i := 1; i < len(runes)-1; i++ {
-		builder.WriteString(fmt.Sprintf("         %s\n", string(runes[i])))
+	idxNow := int(now.Sub(r.data.HourlyTime[0]).Hours() / 2)
+	for i, row := range runes {
+		switch i {
+		case 0:
+			builder.WriteString(fmt.Sprintf("%8.1f ", vMax))
+		case len(runes) - 1:
+			builder.WriteString(fmt.Sprintf("%8.1f ", vMin))
+		default:
+			builder.WriteString("         ")
+		}
+		for j, r := range row {
+			if j == idxNow {
+				builder.WriteString(fmt.Sprintf("[yellow]%s[-]", string(r)))
+			} else {
+				builder.WriteRune(r)
+			}
+		}
+		builder.WriteRune('\n')
 	}
-
-	builder.WriteString(fmt.Sprintf("%8.1f ", vMin))
-	builder.WriteString(fmt.Sprintf("%s\n", string(runes[len(runes)-1])))
 
 	builder.WriteString("         ")
 	for _, t := range r.data.DailyTime {

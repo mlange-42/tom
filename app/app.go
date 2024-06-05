@@ -3,7 +3,6 @@ package app
 import (
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/mlange-42/tom/api"
@@ -89,11 +88,7 @@ func (a *App) Run() error {
 }
 
 func (a *App) createWidgets() error {
-	var now time.Time
-	loc, err := time.LoadLocation(a.data.Location.TimeZone)
-	if err == nil {
-		now = time.Now().In(loc)
-	}
+	now := a.data.Current.Time
 
 	renderer := render.NewRenderer(a.data)
 	a.currentWeather = tview.NewTextView().
