@@ -8,6 +8,7 @@
 ### Other
 
 - Improve location selection dialog layout, add help (#31)
+- Use XDG directories to store config and known locations (#34)
 
 ## [[v0.2.0]](https://github.com/mlange-42/tom/compare/v0.1.0...v0.2.0)
 
