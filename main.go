@@ -50,7 +50,6 @@ func rootCommand() (*cobra.Command, error) {
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			forceSearchLoc := false
 			if len(args) == 0 {
 				if defaults.Location == "" {
 					cmd.Help()
@@ -59,7 +58,7 @@ func rootCommand() (*cobra.Command, error) {
 				}
 			} else {
 				defaults.Location = strings.ToLower(strings.Join(args, " "))
-				forceSearchLoc = strings.HasSuffix(defaults.Location, "?")
+				defaults.ForceSearch = strings.HasSuffix(defaults.Location, "?")
 				defaults.Location = strings.TrimSuffix(defaults.Location, "?")
 			}
 
@@ -100,7 +99,7 @@ func rootCommand() (*cobra.Command, error) {
 			}
 
 			coords, ok := cached[defaults.Location]
-			if ok && !forceSearchLoc {
+			if ok && !defaults.ForceSearch {
 				defaults.Coords = coords
 				a := app.New(defaults)
 				if err := a.Run(); err != nil {
@@ -121,6 +120,7 @@ func rootCommand() (*cobra.Command, error) {
 	root.Flags().IntVarP(&cli.PastDays, "past-days", "p", 0, "Number of past days to include")
 	root.Flags().StringVarP(&cli.Service.Name, "service", "s", "OM", "Forecast service:\n"+services)
 	root.Flags().BoolVarP(&cli.SetDefault, "default", "", false, "Save given location and settings as default")
+	root.Flags().BoolVarP(&cli.ForceSearch, "search", "?", false, "Force location search instead of previously saved")
 
 	root.Flags().SortFlags = false
 

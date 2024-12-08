@@ -10,12 +10,13 @@ import (
 )
 
 type CliArgs struct {
-	Location   string
-	Coords     Location `yaml:"-"`
-	SetDefault bool     `yaml:"-"`
-	Days       int
-	PastDays   int
-	Service    Service
+	Location    string
+	Coords      Location `yaml:"-"`
+	SetDefault  bool     `yaml:"-"`
+	ForceSearch bool     `yaml:"-"`
+	Days        int
+	PastDays    int
+	Service     Service
 }
 
 func LoadCliArgs() (CliArgs, error) {

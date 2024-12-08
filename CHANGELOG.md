@@ -1,3 +1,9 @@
+## [[unpublished]](https://github.com/mlange-42/tom/compare/v0.4.0...main)
+
+### Features
+
+- Adds flag `--search`/`-?` to force location search (#40)
+
 ## [[v0.4.0]](https://github.com/mlange-42/tom/compare/v0.3.0...v0.4.0)
 
 ### Features
