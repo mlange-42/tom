@@ -1,8 +1,12 @@
-## [[unpublished]](https://github.com/mlange-42/tom/compare/v0.4.0...main)
+## [[v0.5.0]](https://github.com/mlange-42/tom/compare/v0.4.0...0.5.0)
 
 ### Features
 
-- Adds flag `--search`/`-?` to force location search (#40)
+- Adds flag `--search`/`-?` to force location search (#41)
+
+### Bugfixes
+
+- Fix time zones missing on local system, by import of `time/tzdata` (#42)
 
 ## [[v0.4.0]](https://github.com/mlange-42/tom/compare/v0.3.0...v0.4.0)
 

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
+	_ "time/tzdata"
 
 	"github.com/mlange-42/tom/util/agg"
 )
